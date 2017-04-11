@@ -1,11 +1,10 @@
 import numpy as np
-import itertools as itTl
 import makeBox as mkBx
+import itertools as itTl
 import makeGrids as mkGds
-import makeCrystalStruct as mkXtlSt
-import makeOcthedron as mkOct
 import makePlanes as mkPlns
-import pyqtgraph.exporters
+import makeOcthedron as mkOct
+import makeCrystalStruct as mkXtlSt
 
 transp=1
 scl=1

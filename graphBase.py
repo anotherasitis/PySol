@@ -3,6 +3,7 @@ from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.parametertree import types as pTypes
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
+import crystalParamBase
 import pyqtgraph.exporters
 import pyqtgraph.opengl as gl
 # import numpy as np
@@ -12,7 +13,6 @@ import pyqtgraph.opengl as gl
 # import makePlanes as mkPlns
 # import makeOcthedron as mkOct
 # import makeCrystalStruct as mkXtlSt
-
 
 class graphBase(QtGui.QWidget):
 	
@@ -26,7 +26,7 @@ class graphBase(QtGui.QWidget):
 
 		# Insert a widget that allows for division of the layout
 		self.splitterMain = QtGui.QSplitter()
-		self.splitterMain.setOrientation(QtCore.Qt.Horizontal)
+		self.splitterMain.setOrientation(QtCore.Qt.Vertical)
 		self.layout.addWidget(self.splitterMain)
 
 		# View for adding crystals
@@ -44,40 +44,10 @@ class graphBase(QtGui.QWidget):
 		self.splitterSubView.setOrientation(QtCore.Qt.Vertical)
 		self.splitterMain.addWidget(self.splitterSubView)
 
+		self.crystalParam=[]
+
 	# Adds a news window to add a new crystal next door
 	def addCrystalParam(self):
-		self.splitterSubSubParam = QtGui.QSplitter()
-		self.splitterSubSubParam.setOrientation(QtCore.Qt.Vertical)
-		self.tree = ParameterTree(showHeader=False)
-		self.newCrystalView = QtGui.QPushButton('Show Crystal Structure', self)
-		self.newCrystalView.clicked.connect(self.addCrystalView)
-		self.splitterSubSubParam.addWidget(self.tree)
-		self.splitterSubSubParam.addWidget(self.newCrystalView)
-		self.splitterSubAdd.addWidget(self.splitterSubSubParam)
+		self.crystalParam.append(crystalParamBase.crystalParamBase(self))
 
 	# 
-	def addCrystalView(self):
-		self.area = DockArea()
-		self.splitterSubView.addWidget(self.area)
-
-		self.d1 = Dock("Dock1", size=(1, 1)) 
-		self.d2 = Dock('Dock2')    ## give this dock the minimum possible size
-		self.area.addDock(self.d1, 'left')
-		self.area.addDock(self.d2, 'left') 
-
-		self.w = gl.GLViewWidget()
-		self.w.setBackgroundColor('k')
-		self.w.setWindowTitle('Structure')
-		self.w.setCameraPosition(distance=3, azimuth=-280)
-		self.d2.addWidget(self.w)
-
-		self.subArea =  DockArea() # give this dock the minimum possible size
-		self.subD1 = Dock("Sub Dock 1", size=(1, 1))  
-		self.subD2 = Dock("Sub Dock 2", size=(1, 1))
-
-		self.subArea.addDock(self.subD1, 'top') 
-		self.subArea.addDock(self.subD2, )
-		self.radio1 = QtGui.QRadioButton()
-		self.radio1.setText("Radio 1")
-		self.d1.addWidget(self.radio1,row=0,col=0)
-		self.d1.addWidget(self.subArea,row=0,col=1)
