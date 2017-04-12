@@ -6,6 +6,13 @@ from pyqtgraph.parametertree import ParameterItem, registerParameterType
 import pyqtgraph as pg
 import pyqtgraph.exporters
 import pyqtgraph.opengl as gl
+# import numpy as np
+# import makeBox as mkBx
+# import itertools as itTl
+# import makeGrids as mkGds
+# import makePlanes as mkPlns
+# import makeOcthedron as mkOct
+# import makeCrystalStruct as mkXtlSt
 
 class crystalViewBase(pTypes.GroupParameter):
 
@@ -50,7 +57,7 @@ class crystalViewBase(pTypes.GroupParameter):
 			 		dict(name = 'Brillouin Zones to Show', type = 'int', value = 0, default = 0)
 			 		]),
 
-			 	dict(name = 'Show Planes', type = 'bool', value = True, default = False,
+			 	dict(name = 'Show Planes', type = 'bool', value = False, default = False,
 			 		children = [
 			 		dict(name = 'Axis', type = 'int', value = 000, default = 000) 
 			 		]),
@@ -67,9 +74,26 @@ class crystalViewBase(pTypes.GroupParameter):
 
 		pTypes.GroupParameter.__init__(self, **defs)
 		self.area = DockArea()
-		# self.param('Display...').#######add the hide and disable options
-		# sigStateChanged.connect(self.latticeCheck)
+		self.param('Display...').sigTreeStateChanged.connect(self.displayChecked)
 
-	def DisplayChange(self):
+	def displayChecked(self, param, changes):
+		
 
-		print('hi')
+		print('hello')
+		print("tree changes:")
+		for param, change, data in changes:
+			path = self.param('Display...').childPath(param)
+			if path is not None:
+				childName = '.'.join(path)
+			
+			else:
+				childName = param.name()
+			
+			if data and isinstance(data, bool):
+				d = Dock(childName)
+				self.area.addDock(d)
+
+			print('  parameter: %s'% childName)
+			print('  change:    %s'% change)
+			print('  data:      %s'% str(data))
+			print('  ----------')

@@ -13,13 +13,7 @@ import pyqtgraph as pg
 import crystalParamBase
 import pyqtgraph.exporters
 import pyqtgraph.opengl as gl
-# import numpy as np
-# import makeBox as mkBx
-# import itertools as itTl
-# import makeGrids as mkGds
-# import makePlanes as mkPlns
-# import makeOcthedron as mkOct
-# import makeCrystalStruct as mkXtlSt
+
 
 class graphBase(QtGui.QWidget):
 	
@@ -60,7 +54,7 @@ class graphBase(QtGui.QWidget):
 		
 	# Adds a news window to add a new crystal next door
 	def addCrystalParam(self):
-		self.params.crystalBase.addCrystalView(self.params)
+		self.params.addCrystalView(self.params)
 		self.params.param('Chemical Formula').setToDefault()
 		self.params.param('Polytype').setToDefault()
 		self.params.param('Temperature').setToDefault()
