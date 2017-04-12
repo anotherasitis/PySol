@@ -26,25 +26,8 @@ class graphBase(QtGui.QWidget):
 	def __init__(self):
 		QtGui.QWidget.__init__(self)
 
-		# self.crystalViewer = []
-
 		self.setUpGui()
-
-		self.crystalBase = crystalParamBase()
-
-		# self.crystalParamGroup = crystalParamBase()
-		self.params = Parameter.create(name = 'params', type = 'group',
-			children = [dict(name = 'Chemical Formula', type = 'str', value = '', default = ''),
-			dict(name = 'Polytype', type = 'str', value = '', default = ''),
-			dict(name = 'Temperature', type = 'float', value = 293, default = 293, 
-				siPrefix = True, suffix = 'K'),
-
-			dict(name = 'Pressure', type = 'float', value = 101, default = 101, 
-				siPrefix = True, suffix = 'kPa'),
-
-			dict(name = 'Add Crystal', type = 'action'),
-			self.crystalBase,
-			])
+		self.params = crytalParamInitialize()
 
 		self.tree.setParameters(self.params, showTop = False)
 		self.params.param('Add Crystal').sigActivated.connect(self.addCrystalParam)
@@ -70,14 +53,6 @@ class graphBase(QtGui.QWidget):
 		self.tree = ParameterTree(showHeader = False)
 		self.splitterSubAdd.addWidget(self.tree)
 
-
-
-		# # Button for adding new crystal
-		# self.newCrystalBut = QtGui.QPushButton('Add a New Crystal', self)
-		# self.newCrystalBut.clicked.connect(self.addCrystalParam)
-		# self.splitterSubAdd.addWidget(self.newCrystalBut)
-
-		# add a subsplitter to allow for many crystals to be visualized
 		self.splitterSubView = QtGui.QSplitter()
 		self.splitterSubView.setOrientation(QtCore.Qt.Vertical)
 		self.splitterMain.addWidget(self.splitterSubView)
@@ -86,35 +61,46 @@ class graphBase(QtGui.QWidget):
 	# Adds a news window to add a new crystal next door
 	def addCrystalParam(self):
 		# newView = crystalParamBase.crystalParamBase()
-		self.crystalBase.addCrystalView(self.params)
+		self.params.crystalBase.addCrystalView(self.params)
+		self.params.param('Chemical Formula').setToDefault()
+		self.params.param('Polytype').setToDefault()
+		self.params.param('Temperature').setToDefault()
+		self.params.param('Pressure').setToDefault()
 		
-		self.area = DockArea()
-		self.splitterSubView.addWidget(self.area)
+		# self.area = DockArea()
+		# self.splitterSubView.addWidget(self.params.crystalBase.children()[-1].area)
 
 		# self.d1 = Dock("Dock1", size = (1, 1)) 
-		self.d2 = Dock('Dock2')    ## give this dock the minimum possible size
-		# self.area.addDock(self.d1, 'left')
-		self.area.addDock(self.d2, 'left') 
+		# self.d2 = Dock('Dock2')    ## give this dock the minimum possible size
+		# # self.area.addDock(self.d1, 'left')
+		# self.area.addDock(self.d2, 'left') 
 
-		self.w = gl.GLViewWidget()
-		self.w.setBackgroundColor('k')
-		self.w.setWindowTitle('Structure')
-		self.w.setCameraPosition(distance = 3, azimuth = -280)
-		self.d2.addWidget(self.w)
+		# self.w = gl.GLViewWidget()
+		# self.w.setBackgroundColor('k')
+		# self.w.setWindowTitle('Structure')
+		# self.w.setCameraPosition(distance = 3, azimuth = -280)
+		# self.d2.addWidget(self.w)		
 
-		# self.subArea =  DockArea() # give this dock the minimum possible size
-		# self.subD1 = Dock("Sub Dock 1", size = (1, 1))  
-		# self.subD2 = Dock("Sub Dock 2", size = (1, 1))
+class crytalParamInitialize(pTypes.GroupParameter):
 
-		# self.subArea.addDock(self.subD1, 'top') 
-		# self.subArea.addDock(self.subD2, )
-		# self.radio1 = QtGui.QRadioButton()
-		# self.radio1.setText("Radio 1")
-		# self.d1.addWidget(self.radio1,row = 0,col = 0)
-		# self.d1.addWidget(self.subArea,row = 0,col = 1)
+	def __init__(self, **kwds):
 
+		self.crystalBase = crystalParamBase()
+		defs = dict(name = 'params', type = 'group',
+			children = [
+			dict(name = 'Chemical Formula', type = 'str', value = '', default = ''),
+			dict(name = 'Polytype', type = 'str', value = '', default = ''),
+			dict(name = 'Temperature', type = 'float', value = 293, default = 293, 
+				siPrefix = True, suffix = 'K'),
 
-		
+			dict(name = 'Pressure', type = 'float', value = 101, default = 101, 
+				siPrefix = True, suffix = 'kPa'),
+
+			dict(name = 'Add Crystal', type = 'action'),
+			self.crystalBase,
+			])
+
+		pTypes.GroupParameter.__init__(self, **defs)
 
 class crystalParamBase(pTypes.GroupParameter):
 
@@ -129,7 +115,10 @@ class crystalViewBase(pTypes.GroupParameter):
 
 	def __init__(self, paramsToApply):
 
-		self.graphsToShow = graphsToShow()
+		# self.graphsToShow = graphsToShow()
+
+		# print(self.graphsToShow.param('Crystal Lattice').value())
+		# print(self.graphsToShow.param('Show Planes').value())
 
 		defs = dict(name = paramsToApply.param('Chemical Formula').value(),
 			removable = True, children = [dict(name = 'Polytype', type = 'str', 
@@ -142,45 +131,110 @@ class crystalViewBase(pTypes.GroupParameter):
 			dict(name = 'Pressure', type = 'float',
 				value = paramsToApply.param('Pressure').value(),
 				readonly = True, siPrefix = True, suffix = 'kPa'),
-			self.graphsToShow,
-			])
+			
+			dict(name = 'Display...', children = [
+			 	dict(name = 'Crystal Lattice', type = 'bool', value = False, default = False,
+			 		children = [
+			 		dict(name = 'Crystal Dimension to Display (X)', type = 'float', value = 1,
+			 			default = 1),
 
-		pTypes.GroupParameter.__init__(self, **defs)
-		
+			 		dict(name = 'Crystal Dimension to Display (Y)', type = 'float', value = 1,
+			 			default = 1),
 
-class graphsToShow(pTypes.GroupParameter):
+			 		dict(name = 'Crystal Dimension to Display (Z)', type = 'float', value = 1,
+			 			default = 1)
+			 		]),
 
-	def __init__(self):
-		 defs = dict(name = 'Display...', children = [
-		 	dict(name = 'Crystal Lattice', type = 'bool', value = False, default = False,
-		 		children = [
-		 		dict(name = 'Crystal Dimension to Display (X)', type = 'float', value = 1,
-		 			default = 1),
+			 	dict(name = 'Reciprocal Lattice', type = 'bool', value = False, default = False,
+			 		children = [
+			 		dict(name = 'Crystal Dimension to Display (X)', type = 'float', value = 1,
+			 			default = 1),
 
-		 		dict(name = 'Crystal Dimension to Display (Y)', type = 'float', value = 1,
-		 			default = 1),
+			 		dict(name = 'Crystal Dimension to Display (Y)', type = 'float', value = 1,
+			 			default = 1),
 
-		 		dict(name = 'Crystal Dimension to Display (Z)', type = 'float', value = 1,
-		 			default = 1)
+			 		dict(name = 'Crystal Dimension to Display (Z)', type = 'float', value = 1,
+			 			default = 1),
+
+			 		dict(name = 'Brillouin Zones to Show', type = 'int', value = 0, default = 0)
+			 		]),
+
+			 	dict(name = 'Show Planes', type = 'bool', value = True, default = False,
+			 		children = [
+			 		dict(name = 'Axis', type = 'int', value = 000, default = 000) 
+			 		]),
+
+			 	dict(name = 'X-Ray Diffraction Pattern', type = 'bool', value = False, default = False,
+			 		children = [
+			 		dict(name = 'Axis', type = 'int', value = 000, default = 000) 
+			 			]),
+
+			 	dict(name = 'Phonon Dispersion Curve', type = 'bool', value = False, default = False),
+			 	dict(name = 'Electronic Band Structure', type = 'bool', value = False, default = False),
 		 		]),
-
-		 	dict(name = 'Reciprocal Lattice', type = 'bool', value = False, default = False,
-		 		children = [
-		 		dict(name = 'Brillouin Zones to Show', type = 'int', value = 0, default = 0)
-		 		]),
-
-		 	dict(name = 'Show Planes', type = 'bool', value = False, default = False,
-		 		children = [
-		 		dict(name = 'Axis', type = 'int', value = 000, default = 000) 
-		 		]),
-
-		 	dict(name = 'X-Ray Diffraction Pattern', type = 'bool', value = False, default = False,
-		 		children = [
-		 		dict(name = 'Axis', type = 'int', value = 000, default = 000) 
-		 			]),
-
-		 	dict(name = 'Phonon Dispersion Curve', type = 'bool', value = False, default = False),
-		 	dict(name = 'Electronic Band Structure', type = 'bool', value = False, default = False),
 		 	])
 
-		 pTypes.GroupParameter.__init__(self, **defs)
+		pTypes.GroupParameter.__init__(self, **defs)
+		self.area = DockArea()
+		self.param('Display...').
+		# sigStateChanged.connect(self.latticeCheck)
+
+	def DisplayChange(self):
+
+		print(self.param('Display...').sigStateChanged())
+		# if self.param('Display...').param('Crystal Lattice').value():
+		# 	print('checked')
+
+		# elif not self.param('Display...').param('Crystal Lattice').value():
+		# 	print('unchecked')
+
+
+	# def addDockSpace(self):
+
+		
+
+# class graphsToShow(pTypes.GroupParameter):
+
+# 	def __init__(self):
+# 		defs = dict(name = 'Display...', children = [
+# 		 	dict(name = 'Crystal Lattice', type = 'bool', value = False, default = False,
+# 		 		children = [
+# 		 		dict(name = 'Crystal Dimension to Display (X)', type = 'float', value = 1,
+# 		 			default = 1),
+
+# 		 		dict(name = 'Crystal Dimension to Display (Y)', type = 'float', value = 1,
+# 		 			default = 1),
+
+# 		 		dict(name = 'Crystal Dimension to Display (Z)', type = 'float', value = 1,
+# 		 			default = 1)
+# 		 		]),
+
+# 		 	dict(name = 'Reciprocal Lattice', type = 'bool', value = False, default = False,
+# 		 		children = [
+# 		 		dict(name = 'Crystal Dimension to Display (X)', type = 'float', value = 1,
+# 		 			default = 1),
+
+# 		 		dict(name = 'Crystal Dimension to Display (Y)', type = 'float', value = 1,
+# 		 			default = 1),
+
+# 		 		dict(name = 'Crystal Dimension to Display (Z)', type = 'float', value = 1,
+# 		 			default = 1),
+
+# 		 		dict(name = 'Brillouin Zones to Show', type = 'int', value = 0, default = 0)
+# 		 		]),
+
+# 		 	dict(name = 'Show Planes', type = 'bool', value = True, default = False,
+# 		 		children = [
+# 		 		dict(name = 'Axis', type = 'int', value = 000, default = 000) 
+# 		 		]),
+
+# 		 	dict(name = 'X-Ray Diffraction Pattern', type = 'bool', value = False, default = False,
+# 		 		children = [
+# 		 		dict(name = 'Axis', type = 'int', value = 000, default = 000) 
+# 		 			]),
+
+# 		 	dict(name = 'Phonon Dispersion Curve', type = 'bool', value = False, default = False),
+# 		 	dict(name = 'Electronic Band Structure', type = 'bool', value = False, default = False),
+# 		 	])
+
+# 		pTypes.GroupParameter.__init__(self, **defs)
