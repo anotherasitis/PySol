@@ -11,8 +11,7 @@ import pyqtgraph.opengl as gl
 class crytalParamInitialize(pTypes.GroupParameter):
 
 	def __init__(self, **kwds):
-
-		# self.crystalBase = crystalParamBase()
+		self.crystalList = {}
 		defs = dict(name = 'params', type = 'group',children =[ 
 				dict(name = 'Chemical Formula', type = 'str', value = '', default = ''),
 				dict(name = 'Polytype', type = 'str', value = '', default = ''),
@@ -27,6 +26,13 @@ class crytalParamInitialize(pTypes.GroupParameter):
 				])
 
 		pTypes.GroupParameter.__init__(self, **defs)
+		self.param('Crystals').sigChildRemoved.connect(self.crystalRemoved)
 
 	def addCrystalView(self, paramsToApply):
-		self.param('Crystals').addChild(crystalViewBase.crystalViewBase(paramsToApply))	
+		a = crystalViewBase.crystalViewBase(paramsToApply)
+		self.crystalList[paramsToApply.param('Chemical Formula').value()] = a
+		self.param('Crystals').addChild(a)
+
+	def crystalRemoved(self, param, child):
+		del self.crystalList[child.name()]
+

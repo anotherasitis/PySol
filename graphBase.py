@@ -20,15 +20,17 @@ class graphBase(QtGui.QWidget):
 	def __init__(self):
 		QtGui.QWidget.__init__(self)
 
+		self.dockAreaList = {}
+
 		self.setUpGui()
 		self.params = crystalParamBase.crytalParamInitialize()
 
 		self.tree.setParameters(self.params, showTop = False)
 		self.params.param('Add Crystal').sigActivated.connect(self.addCrystalParam)
+		self.params.param('Crystals').sigChildRemoved.connect(self.crystalWindowRemove)
 
 
 	def setUpGui(self):
-
 		# Insert a layout into the main window where other widgets can be added
 		self.layout = QtGui.QVBoxLayout()
 		self.layout.setContentsMargins(0,0,0,0)
@@ -53,9 +55,17 @@ class graphBase(QtGui.QWidget):
 
 		
 	# Adds a news window to add a new crystal next door
-	def addCrystalParam(self):
+	def addCrystalParam(self):		
 		self.params.addCrystalView(self.params)
+		a = self.params.crystalList[
+			self.params.param('Chemical Formula').value()].area
+		self.dockAreaList[self.params.param('Chemical Formula').value()] = a
+		self.splitterSubView.addWidget(a)
 		self.params.param('Chemical Formula').setToDefault()
 		self.params.param('Polytype').setToDefault()
 		self.params.param('Temperature').setToDefault()
 		self.params.param('Pressure').setToDefault()
+
+	def crystalWindowRemove(self, param, child):
+		self.dockAreaList[child.name()].close()
+		del self.dockAreaList[child.name()]

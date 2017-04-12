@@ -17,7 +17,7 @@ import pyqtgraph.opengl as gl
 class crystalViewBase(pTypes.GroupParameter):
 
 	def __init__(self, paramsToApply):
-
+		self.dockList = {}
 		defs = dict(name = paramsToApply.param('Chemical Formula').value(),
 			removable = True, children = [dict(name = 'Polytype', type = 'str', 
 				value = paramsToApply.param('Polytype').value(), readonly = True),
@@ -57,8 +57,10 @@ class crystalViewBase(pTypes.GroupParameter):
 			 		dict(name = 'Brillouin Zones to Show', type = 'int', value = 0, default = 0)
 			 		]),
 
-			 	dict(name = 'Show Planes', type = 'bool', value = False, default = False,
+			 	dict(name = 'Show Planes in...', type = 'bool', value = False, default = False,
 			 		children = [
+			 		dict(name = 'Crystal Lattice', type = 'bool', value = False, default = False),
+					dict(name = 'Reciprocal Lattice', type = 'bool', value = False, default = False),
 			 		dict(name = 'Axis', type = 'int', value = 000, default = 000) 
 			 		]),
 
@@ -77,8 +79,6 @@ class crystalViewBase(pTypes.GroupParameter):
 		self.param('Display...').sigTreeStateChanged.connect(self.displayChecked)
 
 	def displayChecked(self, param, changes):
-		
-
 		print('hello')
 		print("tree changes:")
 		for param, change, data in changes:
@@ -89,11 +89,11 @@ class crystalViewBase(pTypes.GroupParameter):
 			else:
 				childName = param.name()
 			
-			if data and isinstance(data, bool):
+			if data and isinstance(data, bool):				
 				d = Dock(childName)
+				self.dockList[childName] = d
 				self.area.addDock(d)
 
-			print('  parameter: %s'% childName)
-			print('  change:    %s'% change)
-			print('  data:      %s'% str(data))
-			print('  ----------')
+			elif not data and isinstance(data, bool):			
+				self.dockList[childName].close()
+				del self.dockList[childName]
