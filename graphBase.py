@@ -176,7 +176,7 @@ class crystalViewBase(pTypes.GroupParameter):
 
 		pTypes.GroupParameter.__init__(self, **defs)
 		self.area = DockArea()
-		self.param('Display...').
+		self.param('Display...').#######add the hide and disable options
 		# sigStateChanged.connect(self.latticeCheck)
 
 	def DisplayChange(self):
