@@ -3,6 +3,7 @@ from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.parametertree import types as pTypes
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree import ParameterItem, registerParameterType
+import makeCrystalBase
 import pyqtgraph as pg
 import pyqtgraph.exporters
 import pyqtgraph.opengl as gl
@@ -19,7 +20,8 @@ class crystalViewBase(pTypes.GroupParameter):
 	def __init__(self, paramsToApply):
 		self.dockList = {}
 		defs = dict(name = paramsToApply.param('Chemical Formula').value(),
-			removable = True, children = [dict(name = 'Polytype', type = 'str', 
+			removable = True, children = [
+			dict(name = 'Polytype', type = 'str', 
 				value = paramsToApply.param('Polytype').value(), readonly = True),
 
 			dict(name = 'Temperature', type = 'float', 
@@ -79,8 +81,6 @@ class crystalViewBase(pTypes.GroupParameter):
 		self.param('Display...').sigTreeStateChanged.connect(self.displayChecked)
 
 	def displayChecked(self, param, changes):
-		print('hello')
-		print("tree changes:")
 		for param, change, data in changes:
 			path = self.param('Display...').childPath(param)
 			if path is not None:
@@ -89,11 +89,20 @@ class crystalViewBase(pTypes.GroupParameter):
 			else:
 				childName = param.name()
 			
-			if data and isinstance(data, bool):				
-				d = Dock(childName)
-				self.dockList[childName] = d
-				self.area.addDock(d)
+			if data and isinstance(data, bool):	
+				graphicView = makeCrystalBase.makeCrystals(self.param.parent().parent())
+				self.addDock(self.param('Display...').parent().name()
+					+' '+childName)
 
 			elif not data and isinstance(data, bool):			
-				self.dockList[childName].close()
-				del self.dockList[childName]
+				self.removeDock(self.param('Display...').parent().name()
+					+' '+childName)
+
+	def addDock(self,name):
+		d = Dock(name)
+		self.dockList[name] = d
+		self.area.addDock(d)
+
+	def removeDock(self, name):
+		self.dockList[name].close()
+		del self.dockList[name]

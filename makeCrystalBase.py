@@ -1,45 +1,55 @@
+from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph.parametertree import types as pTypes
+from pyqtgraph.parametertree import Parameter, ParameterTree
+from pyqtgraph.parametertree import ParameterItem, registerParameterType
 import numpy as np
 import makeBox as mkBx
+import pyqtgraph as pg
 import itertools as itTl
 import makeGrids as mkGds
+import pyqtgraph.exporters
 import makePlanes as mkPlns
 import makeOcthedron as mkOct
+import pyqtgraph.opengl as gl
 import makeCrystalStruct as mkXtlSt
 
-transp=1
-scl=1
-numLat=2
-firOrg=np.array([0,0,0])
+class makeCrystals():
 
-########################################### Grid Properties
-grids=[]
-rotArr=np.array([0,0,0])
-grdLbl=['X-Axis','Y-Axis','Z-Axis']
+	def __init__(self, parameters):
+		self.transp=1
+		self.scl=1
+		self.numLat=2
+		self.firOrg=np.array([0,0,0])
 
-########################################### Box Properties
-bxs=[]
-lbl=[]
-bxSdLen=1
-linewidth=3
-bxOrPar=np.empty([numLat,3])
+		########################################### Grid Properties
+		self.grids=[]
+		self.rotArr=np.array([0,0,0])
+		self.grdLbl=['X-Axis','Y-Axis','Z-Axis']
 
-########################################### Crystal Properties
-strt=[]
-xtlType='zinc'
-xtlView='std'
-numDiffAt=2
-res=20
+		########################################### Box Properties
+		self.bxs=[]
+		self.lbl=[]
+		self.bxSdLen=1
+		self.linewidth=3
+		self.bxOrPar=np.empty([numLat,3])
 
-########################################### Plane Properties
-plns=[]##############doesnt work yet
-showPln=False
-plnRes=res*7
-plnTransp=transp/3
-plnOr=np.array([1,1,0])
+		########################################### Crystal Properties
+		self.strt=[]
+		self.xtlType='zinc'
+		self.xtlView='std'
+		self.numDiffAt=2
+		self.res=20
 
-########################################### Truncated Octahedron Properties
-octHdr=[]
-octTransp=transp/3
+		########################################### Plane Properties
+		self.plns=[]##############doesnt work yet
+		self.showPln=False
+		self.plnRes=res*7
+		self.plnTransp=transp/3
+		self.plnOr=np.array([1,1,0])
+
+		########################################### Truncated Octahedron Properties
+		self.octHdr=[]
+		self.octTransp=transp/3
 
 ########################################### Setting up Origins
 for i in range(numLat):
