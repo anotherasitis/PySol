@@ -14,7 +14,6 @@ import crystalParamBase
 import pyqtgraph.exporters
 import pyqtgraph.opengl as gl
 
-
 class graphBase(QtGui.QWidget):
 	
 	def __init__(self):

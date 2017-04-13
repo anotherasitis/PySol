@@ -90,16 +90,17 @@ class crystalViewBase(pTypes.GroupParameter):
 				childName = param.name()
 			
 			if data and isinstance(data, bool):	
-				graphicView = makeCrystalBase.makeCrystals(self.param, self.param.parent().parent())
+				graphicView = makeCrystalBase.makeCrystals()#self.param, self.param.parent().parent())
 				self.addDock(self.param('Display...').parent().name()
-					+' '+childName)
+					+' '+childName, graphicView.w)
 
 			elif not data and isinstance(data, bool):			
 				self.removeDock(self.param('Display...').parent().name()
 					+' '+childName)
 
-	def addDock(self,name):
+	def addDock(self, name, w):
 		d = Dock(name)
+		d.addWidget(w)
 		self.dockList[name] = d
 		self.area.addDock(d)
 

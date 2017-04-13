@@ -15,7 +15,11 @@ import makeCrystalStruct as mkXtlSt
 
 class makeCrystals():
 
-	def __init__(self, sigSource, parameters):
+	def __init__(self):
+		self.w = gl.GLViewWidget()
+		self.w.setBackgroundColor('k')
+		self.w.setCameraPosition(distance=3, azimuth=-280)
+
 		self.transp=1
 		self.scl=1
 		self.numLat=2
@@ -31,7 +35,7 @@ class makeCrystals():
 		self.lbl=[]
 		self.bxSdLen=1
 		self.linewidth=3
-		self.bxOrPar=np.empty([numLat,3])
+		self.bxOrPar=np.empty([self.numLat,3])
 
 		########################################### Crystal Properties
 		self.strt=[]
@@ -43,85 +47,88 @@ class makeCrystals():
 		########################################### Plane Properties
 		self.plns=[]##############doesnt work yet
 		self.showPln=False
-		self.plnRes=res*7
-		self.plnTransp=transp/3
+		self.plnRes=self.res*7
+		self.plnTransp=self.transp/3
 		self.plnOr=np.array([1,1,0])
 
 		########################################### Truncated Octahedron Properties
 		self.octHdr=[]
-		self.octTransp=transp/3
+		self.octTransp=self.transp/3
 
-########################################### Setting up Origins
-for i in range(numLat):
-	if xtlView=='std':
-		if i>0:
-			bxOrPar[i]=bxOrPar[i-1]+1
+		########################################### Setting up Origins
+		for i in range(self.numLat):
+			if self.xtlView=='std':
+				if i>0:
+					self.bxOrPar[i]=self.bxOrPar[i-1]+1
 
-		else:
-			bxOrPar[i]=firOrg
+				else:
+					self.bxOrPar[i]=self.firOrg
 
-	elif xtlView=='rcp':
-		if i>0:
-			bxOrPar[i]=bxOrPar[i-1]+0.5
+			elif self.xtlView=='rcp':
+				if i>0:
+					self.bxOrPar[i]=self.bxOrPar[i-1]+0.5
 
-		else:
-			bxOrPar[i]=firOrg
+				else:
+					self.bxOrPar[i]=self.firOrg
 
-########################################### Make Grids
-for indx, i in enumerate(bxOrPar.T):
-	rotArr[indx]=1
-	grids.append(mkGds.mkGds(i,bxSdLen,scl))
-	grids[indx].rotate(270+90*indx, rotArr[2], rotArr[0], rotArr[1])
-	# lbl.append(pg.LabelItem(text=grdLbl[indx],parent=grids[indx]))
-	rotArr=np.array([0,0,0])
+		########################################### Make Grids
+		for indx, i in enumerate(self.bxOrPar.T):
+			self.rotArr[indx]=1
+			self.grids.append(mkGds.mkGds(i,self.bxSdLen,self.scl))
+			self.grids[indx].rotate(270+90*indx, self.rotArr[2], self.rotArr[0], self.rotArr[1])
+			# lbl.append(pg.LabelItem(text=grdLbl[indx],parent=grids[indx]))
+			self.rotArr=np.array([0,0,0])
 
 
-for i in bxOrPar:
-	########################################### Make Boxes
-	bxs.append(mkBx.mkBx(i[0], i[1], i[2],linewidth,transp,scl,bxSdLen))
-	########################################### Make Crystal Lattices
-	strt.append(mkXtlSt.mkXtlSt(xtlType,xtlView,numDiffAt,res,i,bxSdLen,scl,transp,linewidth))
-	########################################## Make Planes
-	if showPln:
-		plns.append(mkPlns.mkPlns(plnOr,i,bxSdLen,scl,plnRes,plnTransp))
-	
-	########################################### Make Truncated Octahedron
-	if xtlView=='rcp':
-		octHdr.append(mkOct.mkOctHdr(i,bxSdLen,scl,octTransp))
+		for i in self.bxOrPar:
+			########################################### Make Boxes
+			self.bxs.append(mkBx.mkBx(i[0], i[1], i[2],self.linewidth,self.transp,self.scl,self.bxSdLen))
+			########################################### Make Crystal Lattices
+			self.strt.append(mkXtlSt.mkXtlSt(self.xtlType,self.xtlView,self.numDiffAt,self.res,
+				i,self.bxSdLen,self.scl,self.transp,self.linewidth))
 
-########################################### Plot Everything
-axs=gl.GLAxisItem(glOptions='opaque')
-axs.setSize(x=scl,y=scl,z=scl)
-# axs.translate(fullD[0],fullD[1],fullD[2])
-w.addItem(axs)
-fullD=np.zeros((3,1))
-for indx, i in enumerate(bxOrPar.T):
-	dir=-np.sign(i.min())
-	if dir==0:
-		dir=-1
-	
-	fullD[indx]=dir*((bxSdLen+i.max())+i.min())/2
+			########################################## Make Planes
+			if self.showPln:
+				self.plns.append(mkPlns.mkPlns(self.plnOr,i,self.bxSdLen,self.scl,
+					self.plnRes,self.plnTransp))
+			
+			########################################### Make Truncated Octahedron
+			if self.xtlView=='rcp':
+				self.octHdr.append(mkOct.mkOctHdr(i,self.bxSdLen,self.scl,self.octTransp))
 
-for i in bxs:
-	for j in i:
-		j.translate(fullD[0],fullD[1],fullD[2])
-		w.addItem(j)
+		########################################### Plot Everything
+		self.axs=gl.GLAxisItem(glOptions='opaque')
+		self.axs.setSize(x=self.scl,y=self.scl,z=self.scl)
+		# axs.translate(fullD[0],fullD[1],fullD[2])
+		self.w.addItem(self.axs)
+		self.fullD=np.zeros((3,1))
+		for indx, i in enumerate(self.bxOrPar.T):
+			dir=-np.sign(i.min())
+			if dir==0:
+				dir=-1
+			
+			self.fullD[indx]=dir*((self.bxSdLen+i.max())+i.min())/2
 
-for i in grids:
-	i.translate(fullD[0],fullD[1],fullD[2])
-	w.addItem(i)
+		for i in self.bxs:
+			for j in i:
+				j.translate(self.fullD[0],self.fullD[1],self.fullD[2])
+				self.w.addItem(j)
 
-for i in strt:
-	for j in i:
-		j.translate(fullD[0],fullD[1],fullD[2])
-		w.addItem(j)
+		for i in self.grids:
+			i.translate(self.fullD[0],self.fullD[1],self.fullD[2])
+			self.w.addItem(i)
 
-if xtlView=='rcp':
-	for i in octHdr:
-		i.translate(fullD[0],fullD[1],fullD[2])
-		w.addItem(i)
+		for i in self.strt:
+			for j in i:
+				j.translate(self.fullD[0],self.fullD[1],self.fullD[2])
+				self.w.addItem(j)
 
-if showPln:
-	for i in plns:
-		i.translate(fullD[0],fullD[1],fullD[2])
-		w.addItem(i)
+		if self.xtlView=='rcp':
+			for i in self.octHdr:
+				i.translate(self.fullD[0],self.fullD[1],self.fullD[2])
+				self.w.addItem(i)
+
+		if self.showPln:
+			for i in self.plns:
+				i.translate(self.fullD[0],self.fullD[1],self.fullD[2])
+				self.w.addItem(i)
