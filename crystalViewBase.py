@@ -90,7 +90,7 @@ class crystalViewBase(pTypes.GroupParameter):
 				childName = param.name()
 			
 			if data and isinstance(data, bool):	
-				graphicView = makeCrystalBase.makeCrystals(self.param.parent().parent())
+				graphicView = makeCrystalBase.makeCrystals(self.param, self.param.parent().parent())
 				self.addDock(self.param('Display...').parent().name()
 					+' '+childName)
 

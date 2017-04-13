@@ -15,7 +15,7 @@ import makeCrystalStruct as mkXtlSt
 
 class makeCrystals():
 
-	def __init__(self, parameters):
+	def __init__(self, sigSource, parameters):
 		self.transp=1
 		self.scl=1
 		self.numLat=2
