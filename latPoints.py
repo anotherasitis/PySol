@@ -12,16 +12,16 @@ from scipy import spatial
 
 def latpts(basis = [0,0,0] , plv = [[1,0,0],[0,1,0],[0,0,1]] , bounds = [1,1,1] , plane = false):
 
-latpoints = {}
+	latpoints = {}
 
-for i in basis[...,]:
-	latpoints[i[0]*100+i[1]*10+i[2]]=i
-	for j in plv[...,]:
+	for i in basis[...,]:
+		latpoints[i[0]*100+i[1]*10+i[2]]=i
+		for j in plv[...,]:
 		#Note bounds should be adjusted to be the solutions to being in or outside a volume (spacial testing for non rectangular shapes)
-		if i[0] + j[0] <= bounds[0] and i[1] + j[1] <= bounds[1] and i[2] + j[2] <= bounds[2]:
-			a=(i[0]*100+i[1]*10+i[2])+(j[0]*100+j[1]*10+j[2])
-			latpoints[a] = i + j
+			if i[0] + j[0] <= bounds[0] and i[1] + j[1] <= bounds[1] and i[2] + j[2] <= bounds[2]:
+				a=(i[0]*100+i[1]*10+i[2])+(j[0]*100+j[1]*10+j[2])
+				latpoints[a] = i + j
 
 #print (latpoints)
 
-return latpoints
+	return latpoints
