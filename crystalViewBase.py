@@ -79,6 +79,7 @@ class crystalViewBase(pTypes.GroupParameter):
 		pTypes.GroupParameter.__init__(self, **defs)
 		self.area = DockArea()
 		self.param('Display...').sigTreeStateChanged.connect(self.displayChecked)
+		
 
 	def displayChecked(self, param, changes):
 		for param, change, data in changes:
@@ -90,7 +91,7 @@ class crystalViewBase(pTypes.GroupParameter):
 				childName = param.name()
 			
 			if data and isinstance(data, bool):	
-				graphicView = makeCrystalBase.makeCrystals()#self.param, self.param.parent().parent())
+				graphicView = makeCrystalBase.makeCrystals()
 				self.addDock(self.param('Display...').parent().name()
 					+' '+childName, graphicView.w)
 

@@ -58,6 +58,7 @@ class graphBase(QtGui.QWidget):
 		self.params.addCrystalView(self.params)
 		a = self.params.crystalList[
 			self.params.param('Chemical Formula').value()].area
+			
 		self.dockAreaList[self.params.param('Chemical Formula').value()] = a
 		self.splitterSubView.addWidget(a)
 		self.params.param('Chemical Formula').setToDefault()
