@@ -30,7 +30,7 @@ class crystalViewBase(pTypes.GroupParameter):
 
 			dict(name = 'Pressure', type = 'float',
 				value = paramsToApply.param('Pressure').value(),
-				readonly = True, siPrefix = True, suffix = 'kPa'),
+				readonly = True, siPrefix = True, suffix = 'Pa'),
 			
 			dict(name = 'Display...', children = [
 			 	dict(name = 'Crystal Lattice', type = 'bool', value = False, default = False,

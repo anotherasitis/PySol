@@ -15,17 +15,17 @@ class crytalParamInitialize(pTypes.GroupParameter):
 	def __init__(self, **kwds):
 		self.crystalList = {}
 		self.chemicals = []
-		self.chemNum = {}
+		self.chemNum = []
 		defs = dict(name = 'params', type = 'group',children =[ 
 				dict(name = 'Chemical Formula', type = 'str', value = '', default = ''),
-				dict(name = 'Polytype', type = 'str', value = '', default = ''),
-				dict(name = 'Temperature', type = 'float', value = 293, default = 293, 
+				dict(name = 'Polytype', type = 'str', value = '', default = '', readonly = True),
+				dict(name = 'Temperature', type = 'float', value = 293, default = 293, readonly = True,
 					siPrefix = True, suffix = 'K'),
-	
-				dict(name = 'Pressure', type = 'float', value = 101, default = 101, 
-					siPrefix = True, suffix = 'kPa'),
-	
-				dict(name = 'Add Crystal', type = 'action'),
+
+				dict(name = 'Pressure', type = 'float', value = 101325, default = 101325, readonly = True,
+					siPrefix = True, suffix = 'Pa'),
+
+				dict(name = 'Add Crystal', type = 'action', enabled = False),
 				dict(name = 'Crystals', type = 'group', removable = False, visible = True, enabled = False),
 				])
 
@@ -42,17 +42,24 @@ class crytalParamInitialize(pTypes.GroupParameter):
 		del self.crystalList[child.name()]
 
 	def isValidChem(self):
-		self.chemicals[self.param('Chemical Formula').value()
-			] = re.findall('[A-Z][^A-Z]*', self.param('Chemical Formula').value())
-
+		self.chemicals = re.findall('[A-Z][^A-Z]*', self.param('Chemical Formula').value())
 		elementDict = {}
 		with open('elementlist.csv') as csvfile:
 			element = csv.reader(csvfile)
 			for i in element:
 				elementDict[i[1]] = [i[0], i[2]]
 
-		self.chemNum[self.param('Chemical Formula').value()] = [
-			elementDict[self.chemicals[self.param('Chemical Formula').value()][0]], 
-			elementDict[self.chemicals[self.param('Chemical Formula').value()][1]]]
-		
-		print(self.chemNum, self.chemicals)
+		if all(elementDict.get(i) for i in self.chemicals):
+			for i in self.chemicals:
+				self.chemNum.append(elementDict[i][0])
+
+			self.param('Polytype').setOpts(readonly = False)
+			self.param('Temperature').setOpts(readonly = False)
+			self.param('Pressure').setOpts(readonly = False)
+			self.param('Add Crystal').setOpts(enabled = True)
+
+		else:
+			self.param('Polytype').setOpts(readonly = True)
+			self.param('Temperature').setOpts(readonly = True)
+			self.param('Pressure').setOpts(readonly = True)
+			self.param('Add Crystal').setOpts(enabled = False)
