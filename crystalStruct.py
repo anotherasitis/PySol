@@ -10,7 +10,8 @@ class crystalStruct():
 		self.latpoints = {}
 		self.latVecConnect = []
 		self.startingPlane = []
-		self.structLim = bounds
+		self.bounds = [1,1,1]
+		self.basis = [0,0,0]
 		self.getPrimLatVect()
 		self.latpts()
 
