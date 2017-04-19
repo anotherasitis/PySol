@@ -38,7 +38,7 @@ class crytalParamInitialize(pTypes.GroupParameter):
 		self.param('Chemical Formula').sigTreeStateChanged.connect(self.isValidChem)
 
 	def addCrystalView(self, paramsToApply):
-		a = crystalViewBase.crystalViewBase(paramsToApply)
+		a = crystalViewBase.crystalViewBase(paramsToApply, self.chemicals, self.chemNum)
 		self.crystalList[paramsToApply.param('Chemical Formula').value()] = a
 		self.param('Crystals').addChild(a)
 
@@ -53,9 +53,12 @@ class crytalParamInitialize(pTypes.GroupParameter):
 			for i in element:
 				elementDict[i[1]] = [i[0], i[2]]
 
-		# if all(elementDict.get(i) for i in self.chemicals):
-		# 	for i in self.chemicals:
-		# 		self.chemNum.append(elementDict[i][0])
+		if all(elementDict.get(i) for i in self.chemicals):
+			for i in self.chemicals:
+				self.chemNum.append(elementDict[i][0])
+
+		else:
+			self.chemNum.clear()
 			
 		# 	for i in self.hideableParam:
 		# 		self.param(i).show(True)

@@ -18,9 +18,8 @@ import pyqtgraph.opengl as gl
 
 class crystalViewBase(pTypes.GroupParameter):
 
-	def __init__(self, paramsToApply):
+	def __init__(self, paramsToApply, chemicals, chemNum):
 		self.dockList = {}
-		self.crystalStruct = crystalStruct.crystalStruct()
 		defs = dict(name = paramsToApply.param('Chemical Formula').value(),
 			removable = True, children = [
 			dict(name = 'Polytype', type = 'str', 
@@ -77,8 +76,17 @@ class crystalViewBase(pTypes.GroupParameter):
 			 	dict(name = 'Electronic Band Structure', type = 'bool', value = False, default = False),
 		 		]),
 		 	])
-
 		pTypes.GroupParameter.__init__(self, **defs)
+		self.paramDict = {
+			'Polytype' : paramsToApply.param('Polytype').value(),
+			'Temperature' : paramsToApply.param('Temperature').value(),
+			'Pressure' : paramsToApply.param('Pressure').value(),
+			'atms' : chemicals,
+			'chemNum' : chemNum,
+			
+			}
+
+		self.crystalStruct = crystalStruct.crystalStruct(self.paramDict)
 		self.area = DockArea()
 		self.param('Display...').sigTreeStateChanged.connect(self.displayChecked)
 		
