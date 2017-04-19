@@ -22,14 +22,14 @@ class crystalViewBase(pTypes.GroupParameter):
 		defs = dict(name = paramsToApply.param('Chemical Formula').value(),
 			removable = True, children = [
 			dict(name = 'Polytype', type = 'str', 
-				value = paramsToApply.param('Polytype').value(), readonly = True),
+				value = paramsToApply.param('Chemical Formula').param('Polytype').value(), readonly = True),
 
 			dict(name = 'Temperature', type = 'float', 
-				value = paramsToApply.param('Temperature').value(), 
+				value = paramsToApply.param('Chemical Formula').param('Temperature').value(), 
 				readonly = True, siPrefix = True, suffix = 'K'),
 
 			dict(name = 'Pressure', type = 'float',
-				value = paramsToApply.param('Pressure').value(),
+				value = paramsToApply.param('Chemical Formula').param('Pressure').value(),
 				readonly = True, siPrefix = True, suffix = 'Pa'),
 			
 			dict(name = 'Display...', children = [

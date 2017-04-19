@@ -25,7 +25,7 @@ class graphBase(QtGui.QWidget):
 		self.params = crystalParamBase.crytalParamInitialize()
 
 		self.tree.setParameters(self.params, showTop = False)
-		self.params.param('Add Crystal').sigActivated.connect(self.addCrystalParam)
+		self.params.param('Chemical Formula').param('Add Crystal').sigActivated.connect(self.addCrystalParam)
 		self.params.param('Crystals').sigChildRemoved.connect(self.crystalWindowRemove)
 
 
@@ -62,9 +62,6 @@ class graphBase(QtGui.QWidget):
 		self.dockAreaList[self.params.param('Chemical Formula').value()] = a
 		self.splitterSubView.addWidget(a)
 		self.params.param('Chemical Formula').setToDefault()
-		self.params.param('Polytype').setToDefault()
-		self.params.param('Temperature').setToDefault()
-		self.params.param('Pressure').setToDefault()
 
 	def crystalWindowRemove(self, param, child):
 		self.dockAreaList[child.name()].close()

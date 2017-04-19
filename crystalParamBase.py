@@ -17,15 +17,15 @@ class crytalParamInitialize(pTypes.GroupParameter):
 		self.chemicals = []
 		self.chemNum = []
 		defs = dict(name = 'params', type = 'group',children =[ 
-				dict(name = 'Chemical Formula', type = 'str', value = '', default = ''),
-				dict(name = 'Polytype', type = 'str', value = '', default = '', readonly = True),
-				dict(name = 'Temperature', type = 'float', value = 293, default = 293, readonly = True,
-					siPrefix = True, suffix = 'K'),
+				dict(name = 'Chemical Formula', type = 'str', value = '', default = '', expanded = False, children = [
+					dict(name = 'Polytype', type = 'str', value = '', default = '', visible = False),
+					dict(name = 'Temperature', type = 'float', value = 293, default = 293,
+						siPrefix = True, suffix = 'K', visible = False),
 
-				dict(name = 'Pressure', type = 'float', value = 101325, default = 101325, readonly = True,
-					siPrefix = True, suffix = 'Pa'),
+					dict(name = 'Pressure', type = 'float', value = 101325, default = 101325,
+						siPrefix = True, suffix = 'Pa', visible = False),
 
-				dict(name = 'Add Crystal', type = 'action', enabled = False),
+					dict(name = 'Add Crystal', type = 'action', visible = False)]),
 				dict(name = 'Crystals', type = 'group', removable = False, visible = True, enabled = False),
 				])
 
@@ -52,14 +52,14 @@ class crytalParamInitialize(pTypes.GroupParameter):
 		if all(elementDict.get(i) for i in self.chemicals):
 			for i in self.chemicals:
 				self.chemNum.append(elementDict[i][0])
-
-			self.param('Polytype').setOpts(readonly = False)
-			self.param('Temperature').setOpts(readonly = False)
-			self.param('Pressure').setOpts(readonly = False)
-			self.param('Add Crystal').setOpts(enabled = True)
+			
+			self.param('Chemical Formula').setOpts(expanded = True)
+			for i in self.param('Chemical Formula').children():
+				i.setOpts(visible = True)
+				print(i.opts['visible'])
 
 		else:
-			self.param('Polytype').setOpts(readonly = True)
-			self.param('Temperature').setOpts(readonly = True)
-			self.param('Pressure').setOpts(readonly = True)
-			self.param('Add Crystal').setOpts(enabled = False)
+			self.param('Chemical Formula').setOpts(expanded = False)
+			for i in self.param('Chemical Formula').children():
+				i.setOpts(visible = False)
+				i.setToDefault()
