@@ -1,9 +1,3 @@
-################################################################################
-# This File contains multiple classes that all require one another. Original 
-# attemps to break it in to many different files for each class seem misguided. 
-# In time however, maybe this will prove unwise.
-################################################################################
-
 from pyqtgraph.dockarea import *
 from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.parametertree import types as pTypes
@@ -25,7 +19,7 @@ class graphBase(QtGui.QWidget):
 		self.params = crystalParamBase.crytalParamInitialize()
 
 		self.tree.setParameters(self.params, showTop = False)
-		self.params.param('Chemical Formula').param('Add Crystal').sigActivated.connect(self.addCrystalParam)
+		self.params.param('Add Crystal').sigActivated.connect(self.addCrystalParam)
 		self.params.param('Crystals').sigChildRemoved.connect(self.crystalWindowRemove)
 
 

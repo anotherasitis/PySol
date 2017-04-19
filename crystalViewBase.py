@@ -3,6 +3,7 @@ from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.parametertree import types as pTypes
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree import ParameterItem, registerParameterType
+import crystalStruct
 import makeCrystalBase
 import pyqtgraph as pg
 import pyqtgraph.exporters
@@ -19,17 +20,18 @@ class crystalViewBase(pTypes.GroupParameter):
 
 	def __init__(self, paramsToApply):
 		self.dockList = {}
+		self.crystalStruct = crystalStruct.crystalStruct()
 		defs = dict(name = paramsToApply.param('Chemical Formula').value(),
 			removable = True, children = [
 			dict(name = 'Polytype', type = 'str', 
-				value = paramsToApply.param('Chemical Formula').param('Polytype').value(), readonly = True),
+				value = paramsToApply.param('Polytype').value(), readonly = True),
 
 			dict(name = 'Temperature', type = 'float', 
-				value = paramsToApply.param('Chemical Formula').param('Temperature').value(), 
+				value = paramsToApply.param('Temperature').value(), 
 				readonly = True, siPrefix = True, suffix = 'K'),
 
 			dict(name = 'Pressure', type = 'float',
-				value = paramsToApply.param('Chemical Formula').param('Pressure').value(),
+				value = paramsToApply.param('Pressure').value(),
 				readonly = True, siPrefix = True, suffix = 'Pa'),
 			
 			dict(name = 'Display...', children = [

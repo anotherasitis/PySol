@@ -3,6 +3,7 @@ from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.parametertree import types as pTypes
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree import ParameterItem, registerParameterType
+import gc
 import re
 import csv
 import crystalViewBase
@@ -16,17 +17,20 @@ class crytalParamInitialize(pTypes.GroupParameter):
 		self.crystalList = {}
 		self.chemicals = []
 		self.chemNum = []
+
+		self.hideableParam = ['Polytype', 'Temperature', 'Pressure', 'Add Crystal']
+
 		defs = dict(name = 'params', type = 'group',children =[ 
-				dict(name = 'Chemical Formula', type = 'str', value = '', default = '', expanded = False, children = [
-					dict(name = 'Polytype', type = 'str', value = '', default = '', visible = False),
-					dict(name = 'Temperature', type = 'float', value = 293, default = 293,
-						siPrefix = True, suffix = 'K', visible = False),
+				dict(name = 'Chemical Formula', type = 'str', value = '', default = ''),
+				dict(name = 'Polytype', type = 'str', value = '', default = ''),
+				dict(name = 'Temperature', type = 'float', value = 293, default = 293,
+					siPrefix = True, suffix = 'K'),
 
-					dict(name = 'Pressure', type = 'float', value = 101325, default = 101325,
-						siPrefix = True, suffix = 'Pa', visible = False),
+				dict(name = 'Pressure', type = 'float', value = 101325, default = 101325,
+					siPrefix = True, suffix = 'Pa'),
 
-					dict(name = 'Add Crystal', type = 'action', visible = False)]),
-				dict(name = 'Crystals', type = 'group', removable = False, visible = True, enabled = False),
+				dict(name = 'Add Crystal', type = 'action'),
+				dict(name = 'Crystals', type = 'group', removable = False, visible = True, enabled = True),
 				])
 
 		pTypes.GroupParameter.__init__(self, **defs)
@@ -49,17 +53,14 @@ class crytalParamInitialize(pTypes.GroupParameter):
 			for i in element:
 				elementDict[i[1]] = [i[0], i[2]]
 
-		if all(elementDict.get(i) for i in self.chemicals):
-			for i in self.chemicals:
-				self.chemNum.append(elementDict[i][0])
+		# if all(elementDict.get(i) for i in self.chemicals):
+		# 	for i in self.chemicals:
+		# 		self.chemNum.append(elementDict[i][0])
 			
-			self.param('Chemical Formula').setOpts(expanded = True)
-			for i in self.param('Chemical Formula').children():
-				i.setOpts(visible = True)
-				print(i.opts['visible'])
+		# 	for i in self.hideableParam:
+		# 		self.param(i).show(True)
 
-		else:
-			self.param('Chemical Formula').setOpts(expanded = False)
-			for i in self.param('Chemical Formula').children():
-				i.setOpts(visible = False)
-				i.setToDefault()
+		# else:
+		# 	for i in self.hideableParam:
+		# 		self.param(i).show(False)
+		# 		self.param(i).setToDefault()
