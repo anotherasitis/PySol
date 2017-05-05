@@ -1,0 +1,6 @@
+import numpy as np
+import Phase as phi
+
+
+def g(R1,R2,R3,K)
+	
