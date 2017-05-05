@@ -26,3 +26,6 @@ class crystalStruct():
 				if i[0] + j[0] <= self.bounds[0] and i[1] + j[1] <= self.bounds[1] and i[2] + j[2] <= self.bounds[2]:
 					a=(i[0]*100+i[1]*10+i[2])+(j[0]*100+j[1]*10+j[2])
 					self.latpoints[a] = i + js
+
+	def calcPhononCurve(self):
+		pass
