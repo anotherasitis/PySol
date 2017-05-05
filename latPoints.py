@@ -2,6 +2,8 @@ from pyqtgraph.Qt import QtCore, QtGui
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 import numpy as np
+import itertools as itTl
+from scipy import spatial
 
 
 #Iterate through and constructure all possible locations for lattice points for a single basis
@@ -38,6 +40,4 @@ def latpts(basis = np.array([[0,0,0]]) , plv = np.array([[1,0,0],[0,1,0],[0,0,1]
 					break
 				#Translation to next point
 			basis=np.array(list(latpoints.values()))
-		
-
 	return latpoints

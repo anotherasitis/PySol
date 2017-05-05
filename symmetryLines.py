@@ -1,8 +1,8 @@
 from pyqtgraph.Qt import QtCore, QtGui
-import pyqtgraph as pg
-import pyqtgraph.opengl as gl
 import numpy as np
+import pyqtgraph as pg
 import itertools as itTl
+import pyqtgraph.opengl as gl
 
 def addSymLns(org=[0,0,0],scl=1,bxSdLen=1,transp=0.8):
 	items=[]

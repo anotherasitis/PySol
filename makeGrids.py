@@ -1,8 +1,8 @@
 from pyqtgraph.Qt import QtCore, QtGui
-import pyqtgraph as pg
-import pyqtgraph.opengl as gl
 import numpy as np
+import pyqtgraph as pg
 import itertools as itTl
+import pyqtgraph.opengl as gl
 
 def mkGds(dims,bxSdLen=1,scl=1):
 	
