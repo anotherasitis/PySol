@@ -1,9 +1,3 @@
-################################################################################
-# This File contains multiple classes that all require one another. Original 
-# attemps to break it in to many different files for each class seem misguided. 
-# In time however, maybe this will prove unwise.
-################################################################################
-
 from pyqtgraph.dockarea import *
 from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.parametertree import types as pTypes
@@ -58,12 +52,10 @@ class graphBase(QtGui.QWidget):
 		self.params.addCrystalView(self.params)
 		a = self.params.crystalList[
 			self.params.param('Chemical Formula').value()].area
+			
 		self.dockAreaList[self.params.param('Chemical Formula').value()] = a
 		self.splitterSubView.addWidget(a)
 		self.params.param('Chemical Formula').setToDefault()
-		self.params.param('Polytype').setToDefault()
-		self.params.param('Temperature').setToDefault()
-		self.params.param('Pressure').setToDefault()
 
 	def crystalWindowRemove(self, param, child):
 		self.dockAreaList[child.name()].close()

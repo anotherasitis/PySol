@@ -22,7 +22,7 @@ class makeCrystals():
 
 		self.transp=1
 		self.scl=1
-		self.numLat=2
+		self.numLat=1
 		self.firOrg=np.array([0,0,0])
 
 		########################################### Grid Properties

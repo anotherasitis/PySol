@@ -3,6 +3,7 @@ from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.parametertree import types as pTypes
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree import ParameterItem, registerParameterType
+import crystalStruct
 import makeCrystalBase
 import pyqtgraph as pg
 import pyqtgraph.exporters
@@ -17,7 +18,7 @@ import pyqtgraph.opengl as gl
 
 class crystalViewBase(pTypes.GroupParameter):
 
-	def __init__(self, paramsToApply):
+	def __init__(self, paramsToApply, chemicals, chemNum):
 		self.dockList = {}
 		defs = dict(name = paramsToApply.param('Chemical Formula').value(),
 			removable = True, children = [
@@ -30,7 +31,7 @@ class crystalViewBase(pTypes.GroupParameter):
 
 			dict(name = 'Pressure', type = 'float',
 				value = paramsToApply.param('Pressure').value(),
-				readonly = True, siPrefix = True, suffix = 'kPa'),
+				readonly = True, siPrefix = True, suffix = 'Pa'),
 			
 			dict(name = 'Display...', children = [
 			 	dict(name = 'Crystal Lattice', type = 'bool', value = False, default = False,
@@ -75,10 +76,20 @@ class crystalViewBase(pTypes.GroupParameter):
 			 	dict(name = 'Electronic Band Structure', type = 'bool', value = False, default = False),
 		 		]),
 		 	])
-
 		pTypes.GroupParameter.__init__(self, **defs)
+		self.paramDict = {
+			'Polytype' : paramsToApply.param('Polytype').value(),
+			'Temperature' : paramsToApply.param('Temperature').value(),
+			'Pressure' : paramsToApply.param('Pressure').value(),
+			'atms' : chemicals,
+			'chemNum' : chemNum,
+			
+			}
+
+		self.crystalStruct = crystalStruct.crystalStruct(self.paramDict)
 		self.area = DockArea()
 		self.param('Display...').sigTreeStateChanged.connect(self.displayChecked)
+		
 
 	def displayChecked(self, param, changes):
 		for param, change, data in changes:
@@ -90,7 +101,7 @@ class crystalViewBase(pTypes.GroupParameter):
 				childName = param.name()
 			
 			if data and isinstance(data, bool):	
-				graphicView = makeCrystalBase.makeCrystals()#self.param, self.param.parent().parent())
+				graphicView = makeCrystalBase.makeCrystals()
 				self.addDock(self.param('Display...').parent().name()
 					+' '+childName, graphicView.w)
 
