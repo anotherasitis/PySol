@@ -7,7 +7,7 @@ import pyqtgraph.opengl as gl
 
 def mkOctHdr(org=[0,0,0],bxSdLen=1,scl=1,transp=0.5):
 
-	clr=[0,1,1,transp]
+	clr=[0, 1, 1, transp]
 	edge=True
 	smooth=True
 	shader='shaded'

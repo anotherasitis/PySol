@@ -21,7 +21,7 @@ class makeCrystals():
 		self.w.setBackgroundColor('k')
 		self.w.setCameraPosition(distance=3, azimuth=-280)
 
-		self.transp=1
+		self.transp=200
 		self.scl=1
 		self.numLat=1
 		self.firOrg=np.array([0,0,0])
@@ -54,7 +54,7 @@ class makeCrystals():
 
 		########################################### Truncated Octahedron Properties
 		self.octHdr=[]
-		self.octTransp=self.transp/3
+		self.octTransp=0.7
 
 		########################################### Setting up Origins
 		for i in range(self.numLat):
@@ -122,6 +122,7 @@ class makeCrystals():
 		for i in self.strt:
 			for j in i:
 				j.translate(self.fullD[0],self.fullD[1],self.fullD[2])
+
 				self.w.addItem(j)
 
 		if self.xtlView=='rcp':

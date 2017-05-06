@@ -33,7 +33,9 @@ def fermiSurf(latPts=(0,0,0)):
 	md = gl.MeshData(vertexes=verts, faces=faces)
 	colors = np.ones((md.faceCount(), 4), dtype=float)
 	colors[:,3] = 0.2
-	colors[:,2] = np.linspace(0, 1, colors.shape[0])
+	colors[:,2] = 0#np.linspace(0, 1, colors.shape[0])
+	colors[:,1] = 0.270588
+	colors[:,0] = 0.7
 	md.setFaceColors(colors)
 	m1 = gl.GLMeshItem(meshdata=md, smooth=False, shader='balloon')
 	m1.setGLOptions('additive')

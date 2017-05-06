@@ -11,7 +11,7 @@ def mkXtlSt(xtlType,xtlView,numDifAt,res,org=np.array([0,0,0]),bxSdLen=1,scl=1,t
 	edges=False
 	smooth=True
 	shader='shaded'
-	glSphr='translucent'
+	glSphr='additive'
 	glLn='opaque'
 	antialias=True
 	color=np.array([np.array([0,0,1]),np.array([1,0,0])])
