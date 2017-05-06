@@ -1,24 +1,11 @@
-
 from pyqtgraph.Qt import QtCore, QtGui
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 import numpy as np
-import sys
-
 
 def fermiSurf(latPts=(0,0,0)):
 	m=90
-	app = QtGui.QApplication([])
-	w = gl.GLViewWidget()
-	w.show()
-	w.setWindowTitle('Fermi surface of FCC lattice')
-
-	w.setCameraPosition(distance=40)
-
-	g = gl.GLGridItem()
-	g.scale(m/10,m/10,m/10)
-	w.addItem(g)
-
+	scl = 0.011256637
 	## Define a scalar field from which we will generate an isosurface
 	def psi(i, j, k, offset=(0, 0, 0)):
 
@@ -42,37 +29,14 @@ def fermiSurf(latPts=(0,0,0)):
 		return ps
 	   
 	data = np.fromfunction(psi, (m,m,m))
-
-
-	print("Generating isosurface..")
 	verts, faces = pg.isosurface(data, data.max()/4.)
-
 	md = gl.MeshData(vertexes=verts, faces=faces)
-
 	colors = np.ones((md.faceCount(), 4), dtype=float)
 	colors[:,3] = 0.2
 	colors[:,2] = np.linspace(0, 1, colors.shape[0])
 	md.setFaceColors(colors)
 	m1 = gl.GLMeshItem(meshdata=md, smooth=False, shader='balloon')
 	m1.setGLOptions('additive')
+	m1.scale(scl,scl,scl)
 
-	#w.addItem(m1)
-	#m1.translate(-25, -25, -20)
-
-	m2 = gl.GLMeshItem(meshdata=md, smooth=True, shader='balloon')
-	m2.setGLOptions('additive')
-
-	w.addItem(m2)
-	m2.translate( -45 + latPts[0], -45 + latPts[1], -45 + latPts[2] )
-	QtGui.QApplication.instance().exec_()
-
-
-
-	## Start Qt event loop unless running in interactive mode.
-	#if __name__ == '__main__':
-	   
-	#    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-	        
-
-
-
+	return m1

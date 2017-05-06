@@ -12,6 +12,7 @@ import makePlanes as mkPlns
 import makeOcthedron as mkOct
 import pyqtgraph.opengl as gl
 import makeCrystalStruct as mkXtlSt
+import FermiSurf
 
 class makeCrystals():
 
@@ -40,7 +41,7 @@ class makeCrystals():
 		########################################### Crystal Properties
 		self.strt=[]
 		self.xtlType='zinc'
-		self.xtlView='std'
+		self.xtlView='rcp'
 		self.numDiffAt=2
 		self.res=20
 
@@ -132,3 +133,8 @@ class makeCrystals():
 			for i in self.plns:
 				i.translate(self.fullD[0],self.fullD[1],self.fullD[2])
 				self.w.addItem(i)
+
+		##############################Quick Hack of Fermi Surface
+		fermSurf = FermiSurf.fermiSurf()
+		fermSurf.translate(-0.5,-0.5,-0.5)
+		self.w.addItem(fermSurf)
