@@ -54,7 +54,7 @@ class makeCrystals():
 
 		########################################### Truncated Octahedron Properties
 		self.octHdr=[]
-		self.octTransp=0.7
+		self.octTransp=1
 
 		########################################### Setting up Origins
 		for i in range(self.numLat):
