@@ -15,7 +15,7 @@ def mkXtlSt(xtlType,xtlView,numDifAt,res,org=np.array([0,0,0]),bxSdLen=1,scl=1,t
 	glLn='opaque'
 	antialias=True
 	color=np.array([np.array([0,0,1]),np.array([1,0,0])])
-	rad=scl/10
+	rad=scl/20
 
 	md = gl.MeshData.sphere(rows=res, cols=res,radius=rad)
 	strts=[]

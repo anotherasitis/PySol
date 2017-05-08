@@ -54,7 +54,7 @@ class makeCrystals():
 
 		########################################### Truncated Octahedron Properties
 		self.octHdr=[]
-		self.octTransp=1
+		self.octTransp=0.6
 
 		########################################### Setting up Origins
 		for i in range(self.numLat):
@@ -130,12 +130,16 @@ class makeCrystals():
 				i.translate(self.fullD[0],self.fullD[1],self.fullD[2])
 				self.w.addItem(i)
 
+			fermSurf1 = FermiSurf.fermiSurf()
+			fermSurf2 = FermiSurf.fermiSurf()
+			fermSurf1.translate(-0.75,-0.75,-0.75)
+			fermSurf2.translate(-0.25,-0.25,-0.25)
+			# self.w.addItem(fermSurf1)
+			# self.w.addItem(fermSurf2)
+
 		if self.showPln:
 			for i in self.plns:
 				i.translate(self.fullD[0],self.fullD[1],self.fullD[2])
 				self.w.addItem(i)
 
 		##############################Quick Hack of Fermi Surface
-		fermSurf = FermiSurf.fermiSurf()
-		fermSurf.translate(-0.5,-0.5,-0.5)
-		self.w.addItem(fermSurf)
