@@ -3,6 +3,7 @@ from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.parametertree import types as pTypes
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree import ParameterItem, registerParameterType
+import gc
 import pyqtgraph as pg
 import crystalParamBase
 import pyqtgraph.exporters
@@ -21,7 +22,6 @@ class graphBase(QtGui.QWidget):
 		self.tree.setParameters(self.params, showTop = False)
 		self.params.param('Add Crystal').sigActivated.connect(self.addCrystalParam)
 		self.params.param('Crystals').sigChildRemoved.connect(self.crystalWindowRemove)
-
 
 	def setUpGui(self):
 		# Insert a layout into the main window where other widgets can be added
@@ -45,18 +45,21 @@ class graphBase(QtGui.QWidget):
 		self.splitterSubView = QtGui.QSplitter()
 		self.splitterSubView.setOrientation(QtCore.Qt.Vertical)
 		self.splitterMain.addWidget(self.splitterSubView)
-
 		
 	# Adds a news window to add a new crystal next door
 	def addCrystalParam(self):		
-		self.params.addCrystalView(self.params)
-		a = self.params.crystalList[
-			self.params.param('Chemical Formula').value()].area
-			
-		self.dockAreaList[self.params.param('Chemical Formula').value()] = a
-		self.splitterSubView.addWidget(a)
+		if not self.params.param('Chemical Formula').value() in self.params.crystalList:
+			self.params.addCrystalView(self.params)
+			a = self.params.crystalList[
+				self.params.param('Chemical Formula').value()].area
+				
+			self.dockAreaList[self.params.param('Chemical Formula').value()] = a
+			self.splitterSubView.addWidget(a)
+
 		self.params.param('Chemical Formula').setToDefault()
+		self.params.param('Polytype').setToDefault()
 
 	def crystalWindowRemove(self, param, child):
 		self.dockAreaList[child.name()].close()
 		del self.dockAreaList[child.name()]
+		gc.collect()

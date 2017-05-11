@@ -2,17 +2,18 @@ from pyqtgraph.Qt import QtCore, QtGui
 from pyqtgraph.parametertree import types as pTypes
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree import ParameterItem, registerParameterType
+import FermiSurf
 import numpy as np
-import makeBox as mkBx
-import pyqtgraph as pg
 import itertools as itTl
-import makeGrids as mkGds
+import pyqtgraph as pg
+import makeBox as mkBx
 import pyqtgraph.exporters
+import makeGrids as mkGds
+import pyqtgraph.opengl as gl
 import makePlanes as mkPlns
 import makeOcthedron as mkOct
-import pyqtgraph.opengl as gl
 import makeCrystalStruct as mkXtlSt
-import FermiSurf
+
 
 class makeCrystals():
 

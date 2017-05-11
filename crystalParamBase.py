@@ -5,7 +5,8 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree import ParameterItem, registerParameterType
 import gc
 import re
-import csv
+import numpy as np
+import pandas as pd
 import crystalViewBase
 import pyqtgraph as pg
 import pyqtgraph.exporters
@@ -17,6 +18,8 @@ class crytalParamInitialize(pTypes.GroupParameter):
 		self.crystalList = {}
 		self.chemicals = []
 		self.chemNum = []
+		self.polyType = []
+		self.primLatVec = []
 
 		self.hideableParam = ['Polytype', 'Temperature', 'Pressure', 'Add Crystal']
 
@@ -36,11 +39,13 @@ class crytalParamInitialize(pTypes.GroupParameter):
 		pTypes.GroupParameter.__init__(self, **defs)
 		self.param('Crystals').sigChildRemoved.connect(self.crystalRemoved)
 		self.param('Chemical Formula').sigTreeStateChanged.connect(self.isValidChem)
+		self.param('Polytype').sigTreeStateChanged.connect(self.isValidPolyType)
 
 	def addCrystalView(self, paramsToApply):
-		a = crystalViewBase.crystalViewBase(paramsToApply, self.chemicals, self.chemNum)
+		a = crystalViewBase.crystalViewBase(paramsToApply, self.chemicals, self.chemNum, self.primLatVec)
 		self.crystalList[paramsToApply.param('Chemical Formula').value()] = a
 		self.param('Crystals').addChild(a)
+
 
 	def crystalRemoved(self, param, child):
 		del self.crystalList[child.name()]
@@ -48,14 +53,15 @@ class crytalParamInitialize(pTypes.GroupParameter):
 	def isValidChem(self):
 		self.chemicals = re.findall('[A-Z][^A-Z]*', self.param('Chemical Formula').value())
 		elementDict = {}
-		with open('elementlist.csv') as csvfile:
-			element = csv.reader(csvfile)
-			for i in element:
-				elementDict[i[1]] = [i[0], i[2]]
+		element = np.array(pd.read_csv('elementlist.csv'))
+		for i in element:
+			elementDict[i[1]] = [i[0], i[2]]
 
 		if all(elementDict.get(i) for i in self.chemicals):
 			for i in self.chemicals:
 				self.chemNum.append(elementDict[i][0])
+
+			print(self.chemNum)
 
 		else:
 			self.chemNum.clear()
@@ -67,3 +73,15 @@ class crytalParamInitialize(pTypes.GroupParameter):
 		# 	for i in self.hideableParam:
 		# 		self.param(i).show(False)
 		# 		self.param(i).setToDefault()
+
+	def isValidPolyType(self):
+		self.polyType = self.param('Polytype').value()
+		polyDict = {}
+		poly = np.array(pd.read_csv('bravais.csv'))
+
+		for i in poly:
+			polyDict[i[0]] = np.array([i[1:4], i[4:7], i[7:10]])
+			
+		if self.param('Polytype').value() in polyDict:
+			self.primLatVec = polyDict[self.param('Polytype').value()]
+			print(self.primLatVec)

@@ -9,8 +9,8 @@ import pyqtgraph as pg
 import pyqtgraph.exporters
 import pyqtgraph.opengl as gl
 # import numpy as np
-# import makeBox as mkBx
 # import itertools as itTl
+# import makeBox as mkBx
 # import makeGrids as mkGds
 # import makePlanes as mkPlns
 # import makeOcthedron as mkOct
@@ -18,7 +18,7 @@ import pyqtgraph.opengl as gl
 
 class crystalViewBase(pTypes.GroupParameter):
 
-	def __init__(self, paramsToApply, chemicals, chemNum):
+	def __init__(self, paramsToApply, chemicals, chemNum, primLatVec):
 		self.dockList = {}
 		defs = dict(name = paramsToApply.param('Chemical Formula').value(),
 			removable = True, children = [
@@ -86,11 +86,10 @@ class crystalViewBase(pTypes.GroupParameter):
 			
 			}
 
-		self.crystalStruct = crystalStruct.crystalStruct(self.paramDict)
+		self.crystalStruct = crystalStruct.crystalStruct(self.paramDict, primLatVec)
 		self.area = DockArea()
 		self.param('Display...').sigTreeStateChanged.connect(self.displayChecked)
-		
-
+	
 	def displayChecked(self, param, changes):
 		for param, change, data in changes:
 			path = self.param('Display...').childPath(param)

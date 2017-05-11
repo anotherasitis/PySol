@@ -13,8 +13,8 @@ import graphBase
 import pyqtgraph as pg
 
 if __name__ == '__main__':
-	import sys
 	
+	import sys
 	app = pg.mkQApp()
 	win = graphBase.graphBase()
 	win.setWindowTitle("PySol")
