@@ -21,10 +21,10 @@ def mkXtlSt(xtlType,xtlView,numDifAt,res,org=np.array([0,0,0]),bxSdLen=1,scl=1,t
 	strts=[]
 
 	if xtlType=='zinc':
-		if xtlView=='std':
+		if xtlView=='Direct Lattice':
 			pstns=np.array([list(itTl.product([0,0.25,0.5,0.75,1],repeat=3))])[0]
 
-		elif xtlView=='rcp':
+		elif xtlView=='Reciprocal Lattice':
 			pstns=np.array([list(itTl.product([0,0.5,1],repeat=3))])[0]
 			symline=symLns.addSymLns(org,scl,bxSdLen,transp)
 			for i in symline:
@@ -51,9 +51,9 @@ def mkXtlSt(xtlType,xtlView,numDifAt,res,org=np.array([0,0,0]),bxSdLen=1,scl=1,t
 							color=(color[0][0], color[0][1], color[0][2], transp),
 							antialias=antialias, width=linewidth, glOptions=glLn))
 
-			elif ((xtlView=='std' and (np.sum(i)==0 or (np.sum(i)==1 and (i.min()-i.max()==-1 or i.min()-i.max()==-0.5))
+			elif ((xtlView=='Direct Lattice' and (np.sum(i)==0 or (np.sum(i)==1 and (i.min()-i.max()==-1 or i.min()-i.max()==-0.5))
 				or (np.sum(i)==2 and (i.min()-i.max()==-0.5 or i.min()-i.max()==-1))
-				or (np.sum(i)==3 and i.min()-i.max()==0))) or (xtlView=='rcp'
+				or (np.sum(i)==3 and i.min()-i.max()==0))) or (xtlView=='Reciprocal Lattice'
 				and (np.sum(i)==0 or (np.sum(i)==1 and i.min()-i.max()==-1)
 				or (np.sum(i)==1.5 and i.max()-i.min()==0) or (np.sum(i)==2 and i.min()-i.max()==-1)
 				or (np.sum(i)==3 and i.min()-i.max()==0)))):

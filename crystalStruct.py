@@ -10,13 +10,18 @@ class crystalStruct():
 		self.polyType = paramDict['Polytype']
 		self.primLatVect= np.array(primLatVec)
 		self.latPoints = {}
+		self.rcpLatPnts = {}
 		self.latVec = {}
 		self.bondVec = []
 		self.startingPlane = []
-		self.bounds = [1,1,1]
+		self.bounds = np.array([1,1,1])
 		self.basis = [[0,0,0]]	
 		self.latpts()
 		self.getLatVec()
+		print(self.bounds)
+		print(self.latVec)
+		print(self.latPoints)
+		print(self.bondVec)
 		
 	def getLatVec(self):
 		Found=False
@@ -46,9 +51,7 @@ class crystalStruct():
 			c = list(cubePoints.keys())
 			self.bondVec = np.array([[1,0,0],[0,1,0],[0,0,1]])
 			bondVec2 = np.array([[0.5,0.5,0],[0,0.5,0.5],[0.5,0,0.5],[-0.5,0.5,0],[0,-0.5,0.5],[0.5,0,-0.5],[0.5,-0.5,0],[0,0.5,-0.5],[-0.5,0,0.5],[-0.5,-0.5,0],[0,-0.5,-0.5],[-0.5,0,-0.5]])
-			print(cubePoints)
 			for k in cubePoints:
-				print(cubePoints[k])
 				for i in bondVec2:
 					found = True
 					bond = i + cubePoints[k]
@@ -84,8 +87,8 @@ class crystalStruct():
 
 		elif self.polyType == 'ZB':
 			plv = np.array([[0.5,0.5,0],[0,0.5,0.5],[0.5,0,0.5]])
-			tethe = np.array([[0.25,0.25,0.25],[0.25,-0.25,-0.25], [-0.25,0.25,-0.25],[-0.25,-0.25,0.25]])
-			ZBpts = latpts.latpts(np.array([[0,0,0],[0.25,0.25,0.25]]),plv)
+			tethe = np.array([[0.25,0.25,0.25],[0.25,-0.25,-0.25],[-0.25,0.25,-0.25],[-0.25,-0.25,0.25]])
+			ZBpts = latPoints.latpts(np.array([[0,0,0],[0.25,0.25,0.25]]),plv)
 			self.latVec = {}
 			for k in ZBpts:
 				self.latVec[k] = np.array( [ ZBpts[k], ZBpts[k]+tethe[0], ZBpts[k]+tethe[1], ZBpts[k]+tethe[2], ZBpts[k]+tethe[3] ])

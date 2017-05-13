@@ -21,8 +21,6 @@ class crytalParamInitialize(pTypes.GroupParameter):
 		self.polyType = []
 		self.primLatVec = []
 
-		self.hideableParam = ['Polytype', 'Temperature', 'Pressure', 'Add Crystal']
-
 		defs = dict(name = 'params', type = 'group',children =[ 
 				dict(name = 'Chemical Formula', type = 'str', value = '', default = ''),
 				dict(name = 'Polytype', type = 'str', value = '', default = ''),
@@ -61,7 +59,7 @@ class crytalParamInitialize(pTypes.GroupParameter):
 			for i in self.chemicals:
 				self.chemNum.append(elementDict[i][0])
 
-			print(self.chemNum)
+			# print(self.chemNum)
 
 		else:
 			self.chemNum.clear()
@@ -84,4 +82,4 @@ class crytalParamInitialize(pTypes.GroupParameter):
 			
 		if self.param('Polytype').value() in polyDict:
 			self.primLatVec = polyDict[self.param('Polytype').value()]
-			print(self.primLatVec)
+			# print(self.primLatVec)

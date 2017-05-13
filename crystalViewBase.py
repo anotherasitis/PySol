@@ -4,11 +4,11 @@ from pyqtgraph.parametertree import types as pTypes
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree import ParameterItem, registerParameterType
 import crystalStruct
-import makeCrystalBase
+import numpy as np
 import pyqtgraph as pg
+import makeCrystalBase
 import pyqtgraph.exporters
 import pyqtgraph.opengl as gl
-# import numpy as np
 # import itertools as itTl
 # import makeBox as mkBx
 # import makeGrids as mkGds
@@ -34,27 +34,27 @@ class crystalViewBase(pTypes.GroupParameter):
 				readonly = True, siPrefix = True, suffix = 'Pa'),
 			
 			dict(name = 'Display...', children = [
-			 	dict(name = 'Crystal Lattice', type = 'bool', value = False, default = False,
+			 	dict(name = 'Direct Lattice', type = 'bool', value = False, default = False,
 			 		children = [
-			 		dict(name = 'Crystal Dimension to Display (X)', type = 'float', value = 1,
+			 		dict(name = 'Crystal Dimension to Display (X)', type = 'int', value = 1,
 			 			default = 1),
 
-			 		dict(name = 'Crystal Dimension to Display (Y)', type = 'float', value = 1,
+			 		dict(name = 'Crystal Dimension to Display (Y)', type = 'int', value = 1,
 			 			default = 1),
 
-			 		dict(name = 'Crystal Dimension to Display (Z)', type = 'float', value = 1,
+			 		dict(name = 'Crystal Dimension to Display (Z)', type = 'int', value = 1,
 			 			default = 1)
 			 		]),
 
 			 	dict(name = 'Reciprocal Lattice', type = 'bool', value = False, default = False,
 			 		children = [
-			 		dict(name = 'Crystal Dimension to Display (X)', type = 'float', value = 1,
+			 		dict(name = 'Crystal Dimension to Display (X)', type = 'int', value = 1,
 			 			default = 1),
 
-			 		dict(name = 'Crystal Dimension to Display (Y)', type = 'float', value = 1,
+			 		dict(name = 'Crystal Dimension to Display (Y)', type = 'int', value = 1,
 			 			default = 1),
 
-			 		dict(name = 'Crystal Dimension to Display (Z)', type = 'float', value = 1,
+			 		dict(name = 'Crystal Dimension to Display (Z)', type = 'int', value = 1,
 			 			default = 1),
 
 			 		dict(name = 'Brillouin Zones to Show', type = 'int', value = 0, default = 0)
@@ -83,10 +83,10 @@ class crystalViewBase(pTypes.GroupParameter):
 			'Pressure' : paramsToApply.param('Pressure').value(),
 			'atms' : chemicals,
 			'chemNum' : chemNum,
-			
 			}
 
 		self.crystalStruct = crystalStruct.crystalStruct(self.paramDict, primLatVec)
+		# self.crystGraphBase = makeCrystalBase.makeCrystals(self.crystalStruct)
 		self.area = DockArea()
 		self.param('Display...').sigTreeStateChanged.connect(self.displayChecked)
 	
@@ -99,8 +99,17 @@ class crystalViewBase(pTypes.GroupParameter):
 			else:
 				childName = param.name()
 			
-			if data and isinstance(data, bool):	
-				graphicView = makeCrystalBase.makeCrystals()
+			if data and isinstance(data, bool):
+				if childName == 'Direct Lattice' or childName == 'Reciprocal Lattice':
+					self.crystalStruct.bounds = np.array([
+						self.param('Display...').param(childName).param( 'Crystal Dimension to Display (X)').value(),
+						self.param('Display...').param(childName).param( 'Crystal Dimension to Display (Y)').value(),
+						self.param('Display...').param(childName).param( 'Crystal Dimension to Display (Z)').value()])
+					
+					print('SASSSSA')
+					print(self.crystalStruct.bounds)
+
+				graphicView = makeCrystalBase.makeCrystals(self.crystalStruct, childName)
 				self.addDock(self.param('Display...').parent().name()
 					+' '+childName, graphicView.w)
 
