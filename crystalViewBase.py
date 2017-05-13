@@ -105,9 +105,6 @@ class crystalViewBase(pTypes.GroupParameter):
 						self.param('Display...').param(childName).param( 'Crystal Dimension to Display (X)').value(),
 						self.param('Display...').param(childName).param( 'Crystal Dimension to Display (Y)').value(),
 						self.param('Display...').param(childName).param( 'Crystal Dimension to Display (Z)').value()])
-					
-					print('SASSSSA')
-					print(self.crystalStruct.bounds)
 
 				graphicView = makeCrystalBase.makeCrystals(self.crystalStruct, childName)
 				self.addDock(self.param('Display...').parent().name()
