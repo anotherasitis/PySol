@@ -68,7 +68,7 @@ class makeCrystals():
 			],axis=0))
 
 		self.bxOrPar=boxPos[z]
-
+		print(self.bxOrPar)
 		########################################### Make Grids
 		for indx, i in enumerate(self.bxOrPar.T):
 			self.rotArr[indx]=1

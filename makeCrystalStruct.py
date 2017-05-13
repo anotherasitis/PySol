@@ -20,7 +20,7 @@ def mkXtlSt(xtlType,xtlView,numDifAt,res,org=np.array([0,0,0]),bxSdLen=1,scl=1,t
 	md = gl.MeshData.sphere(rows=res, cols=res,radius=rad)
 	strts=[]
 
-	if xtlType=='zinc':
+	if xtlType=='ZB':
 		if xtlView=='Direct Lattice':
 			pstns=np.array([list(itTl.product([0,0.25,0.5,0.75,1],repeat=3))])[0]
 
