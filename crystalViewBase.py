@@ -20,6 +20,7 @@ class crystalViewBase(pTypes.GroupParameter):
 
 	def __init__(self, paramsToApply, chemicals, chemNum, primLatVec):
 		self.dockList = {}
+		self.graphicViewObj = {}
 		defs = dict(name = paramsToApply.param('Chemical Formula').value(),
 			removable = True, children = [
 			dict(name = 'Polytype', type = 'str', 
@@ -57,7 +58,8 @@ class crystalViewBase(pTypes.GroupParameter):
 			 		dict(name = 'Crystal Dimension to Display (Z)', type = 'int', value = 1,
 			 			default = 1),
 
-			 		dict(name = 'Brillouin Zones to Show', type = 'int', value = 0, default = 0)
+			 		dict(name = 'Fermi Surface', type = 'bool', value = False, default = False),
+			 		dict(name = 'First Brillouin Zone', type = 'bool', value = False, default = False)
 			 		]),
 
 			 	dict(name = 'Show Planes in...', type = 'bool', value = False, default = False,
@@ -85,7 +87,7 @@ class crystalViewBase(pTypes.GroupParameter):
 			'chemNum' : chemNum,
 			}
 
-		self.crystalStruct = crystalStruct.crystalStruct(self.paramDict, primLatVec)
+		self.crystalStruct = crystalStruct.crystalStruct(self.paramDict, np.array(primLatVec).astype(float))
 		# self.crystGraphBase = makeCrystalBase.makeCrystals(self.crystalStruct)
 		self.area = DockArea()
 		self.param('Display...').sigTreeStateChanged.connect(self.displayChecked)
@@ -105,14 +107,28 @@ class crystalViewBase(pTypes.GroupParameter):
 						self.param('Display...').param(childName).param( 'Crystal Dimension to Display (X)').value(),
 						self.param('Display...').param(childName).param( 'Crystal Dimension to Display (Y)').value(),
 						self.param('Display...').param(childName).param( 'Crystal Dimension to Display (Z)').value()])
-
-				graphicView = makeCrystalBase.makeCrystals(self.crystalStruct, childName)
-				self.addDock(self.param('Display...').parent().name()
-					+' '+childName, graphicView.w)
+				
+				self.crystalStruct.reInitalizeAllDat()
+				if param.parent().name() == 'Reciprocal Lattice':
+					self.graphicViewObj['Reciprocal Lattice'].createOrAdd(childName)
+				else:
+					self.graphicViewObj[childName] = makeCrystalBase.makeCrystals(self.crystalStruct, childName)
+					self.graphicViewObj[childName].createOrAdd(childName)
+					self.addDock(self.param('Display...').parent().name()
+						+' '+childName, self.graphicViewObj[childName].w)
 
 			elif not data and isinstance(data, bool):			
-				self.removeDock(self.param('Display...').parent().name()
-					+' '+childName)
+				if param.parent().name() == 'Reciprocal Lattice':
+					pass
+
+				else:
+					self.removeDock(self.param('Display...').parent().name()
+						+' '+childName)
+					del self.graphicViewObj[childName]
+					if param.hasChildren():
+						for i in param.children():
+							i.setToDefault()
+
 
 	def addDock(self, name, w):
 		d = Dock(name)

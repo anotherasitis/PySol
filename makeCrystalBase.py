@@ -13,9 +13,8 @@ import makeGrids as mkGds
 import pyqtgraph.opengl as gl
 import makePlanes as mkPlns
 import makeOcthedron as mkOct
+import symmetryLines as symLns
 import makeCrystalStruct as mkXtlSt
-
-
 
 class makeCrystals():
 
@@ -56,8 +55,18 @@ class makeCrystals():
 		self.plnOr=np.array([1,1,0])
 
 		########################################### Truncated Octahedron Properties
-		if latGraphType=='Direct Lattice' or latGraphType=='Reciprocal Lattice':
-			self.makeLatItems()
+		# if latGraphType=='Direct Lattice' or latGraphType=='Reciprocal Lattice':
+	
+	def createOrAdd(self,clickedBut):
+		print('make'+(clickedBut.replace(' ','').split('.', 1))[-1])
+		getattr(self,'make'+(clickedBut.replace(' ','').split('.', 1))[-1])()
+		
+
+	def makeDirectLattice(self):
+		self.makeLatItems()
+
+	def makeReciprocalLattice(self):
+		self.makeLatItems()
 
 	def makeLatItems(self):
 		boxCorn=np.linspace(self.firOrg.min(),self.numLat.max()-1,num=self.numLat.max()-self.firOrg.min())
@@ -69,7 +78,6 @@ class makeCrystals():
 
 		self.bxOrPar=boxPos[z]
 		print(self.bxOrPar)
-		########################################### Make Grids
 		for indx, i in enumerate(self.bxOrPar.T):
 			self.rotArr[indx]=1
 			self.grids.append(mkGds.mkGds(i,self.bxSdLen,self.scl))
@@ -77,26 +85,17 @@ class makeCrystals():
 			# lbl.append(pg.LabelItem(text=grdLbl[indx],parent=grids[indx]))
 			self.rotArr=np.array([0,0,0])
 
-
 		for i in self.bxOrPar:
-			########################################### Make Boxes
 			self.bxs.append(mkBx.mkBx(i[0], i[1], i[2],self.linewidth,self.transp,self.scl,self.bxSdLen))
-			########################################### Make Crystal Lattices
 			self.strt.append(mkXtlSt.mkXtlSt(self.xtlType,self.xtlView,self.numDiffAt,self.res,
 				i,self.bxSdLen,self.scl,self.transp,self.linewidth))
 
-			########################################## Make Planes
 			if self.showPln:
 				self.plns.append(mkPlns.mkPlns(self.plnOr,i,self.bxSdLen,self.scl,
 					self.plnRes,self.plnTransp))
-			
-			########################################### Make Truncated Octahedron
-				
 
-		########################################### Plot Everything
 		self.axs=gl.GLAxisItem(glOptions='opaque')
 		self.axs.setSize(x=self.scl,y=self.scl,z=self.scl)
-		# axs.translate(fullD[0],fullD[1],fullD[2])
 		self.w.addItem(self.axs)
 		self.fullD=np.zeros((3,1))
 		for indx, i in enumerate(self.bxOrPar.T):
@@ -118,7 +117,6 @@ class makeCrystals():
 		for i in self.strt:
 			for j in i:
 				j.translate(self.fullD[0],self.fullD[1],self.fullD[2])
-
 				self.w.addItem(j)
 
 		if self.showPln:
@@ -126,19 +124,29 @@ class makeCrystals():
 				i.translate(self.fullD[0],self.fullD[1],self.fullD[2])
 				self.w.addItem(i)
 
-		##############################Quick Hack of Fermi Surface
-	def addBZ(self):
+	def makeFirstBrillouinZone(self):
 		self.octHdr = []
 		self.octTransp = 0.6
-		self.octHdr.append(mkOct.mkOctHdr(i,self.bxSdLen,self.scl,self.octTransp))
+		for i in self.bxOrPar:
+			a = mkOct.mkOctHdr(i,self.bxSdLen,self.scl,self.octTransp)
+			a.translate(self.fullD[0],self.fullD[1],self.fullD[2])
+			self.octHdr.append(a)
+			symline=symLns.addSymLns(i,self.scl,self.bxSdLen,self.octTransp)
+			for j in symline:
+				j.translate(self.fullD[0],self.fullD[1],self.fullD[2])
+				self.octHdr.append(j)
+
 		for i in self.octHdr:
-			i.translate(self.fullD[0],self.fullD[1],self.fullD[2])
 			self.w.addItem(i)
 
-	def addFermiSurf(self):
+	def makeFermiSurface(self):
 		self.frmSurf = []
 		self.frmTransp = 0.6
-		self.frmSurf.append(FermiSurf.fermiSurf())
-		# fermSurf1.translate(-0.75,-0.75,-0.75)
-		# fermSurf2.translate(-0.25,-0.25,-0.25) SOMETHING HAS TO HAPPEN
-		# WITH POSITION OF FS
+		for i in self.bxOrPar:
+			a=FermiSurf.fermiSurf()
+			a.translate(((self.bxSdLen/2)+i[0]), ((self.bxSdLen/2)+i[1]), ((self.bxSdLen/2)+i[2]))
+			a.translate(self.fullD[0]-0.5*self.scl,self.fullD[1]-0.5*self.scl,self.fullD[2]-0.5*self.scl)
+			self.frmSurf.append(a)
+
+		for i in self.frmSurf:
+			self.w.addItem(i)

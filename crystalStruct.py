@@ -8,7 +8,8 @@ class crystalStruct():
 	def __init__(self, paramDict, primLatVec):
 		self.atms = paramDict['atms']
 		self.polyType = paramDict['Polytype']
-		self.primLatVect= np.array(primLatVec)
+		self.primLatVect = primLatVec
+		self.primRcpLatVec = np.empty([3,3])
 		self.latPoints = {}
 		self.rcpLatPnts = {}
 		self.latVec = {}
@@ -18,11 +19,20 @@ class crystalStruct():
 		self.basis = [[0,0,0]]	
 		self.latpts()
 		self.getLatVec()
-		print(self.bounds)
-		print(self.latVec)
-		print(self.latPoints)
-		print(self.bondVec)
+		self.getRcpLatPnts()
 		
+	def reInitalizeAllDat(self):
+		self.latpts()
+		self.getLatVec()
+		self.getRcpLatPnts()
+
+	def getRcpLatPnts(self):
+		scalarVal = np.dot(self.primLatVect[1], np.cross(self.primLatVect[2], self.primLatVect[0]))
+		self.primRcpLatVec[0] = 2*np.pi*np.cross(self.primLatVect[1], self.primLatVect[2])/scalarVal
+		self.primRcpLatVec[1] = 2*np.pi*np.cross(self.primLatVect[2], self.primLatVect[0])/scalarVal
+		self.primRcpLatVec[2] = 2*np.pi*np.cross(self.primLatVect[0], self.primLatVect[1])/scalarVal
+		self.rcpLatPnts = latPoints.latpts(self.basis, self.primRcpLatVec, self.bounds)
+
 	def getLatVec(self):
 		Found=False
 		#Uses the polytype to determine bond angles then finds nearest atom in latPoints in the direction of the bond
@@ -46,7 +56,7 @@ class crystalStruct():
 		elif self.polyType == 'FCC':
 			cubePoints=latPoints.latpts()
 			#Uses the polytype to determine bond angles then finds nearest atom in latPoints in the direction of the bond
-			fccPoints = latPoints.latpts(np.array([[0,0,0]]), np.array([[0.5,0.5,0],[0,0.5,0.5],[0.5,0,0.5]]))
+			fccPoints = latPoints.latpts(self.basis, np.array([[0.5,0.5,0],[0,0.5,0.5],[0.5,0,0.5]]))
 			j = list(fccPoints.keys())
 			c = list(cubePoints.keys())
 			self.bondVec = np.array([[1,0,0],[0,1,0],[0,0,1]])

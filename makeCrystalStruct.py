@@ -4,7 +4,6 @@ import numpy as np
 import pyqtgraph as pg
 import itertools as itTl
 import pyqtgraph.opengl as gl
-import symmetryLines as symLns
 
 def mkXtlSt(xtlType,xtlView,numDifAt,res,org=np.array([0,0,0]),bxSdLen=1,scl=1,transp=0.8,linewidth=1):
 	
@@ -26,9 +25,7 @@ def mkXtlSt(xtlType,xtlView,numDifAt,res,org=np.array([0,0,0]),bxSdLen=1,scl=1,t
 
 		elif xtlView=='Reciprocal Lattice':
 			pstns=np.array([list(itTl.product([0,0.5,1],repeat=3))])[0]
-			symline=symLns.addSymLns(org,scl,bxSdLen,transp)
-			for i in symline:
-				strts.append(i)
+			
 
 		adjt=np.array([list(itTl.product([-0.125,0.125],repeat=3))])[0]
 		for i in pstns:
