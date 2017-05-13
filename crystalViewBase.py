@@ -75,7 +75,10 @@ class crystalViewBase(pTypes.GroupParameter):
 			 			]),
 
 			 	dict(name = 'Phonon Dispersion Curve', type = 'bool', value = False, default = False),
-			 	dict(name = 'Electronic Band Structure', type = 'bool', value = False, default = False),
+			 	dict(name = 'Electronic Band Structure', children = [
+			 		dict(name = 'LCAO Model',type = 'bool', value = False, default = False),
+			 		#dict(name = 'NFEM Model',type = 'bool', value = False, default = False),
+			 		])
 		 		]),
 		 	])
 		pTypes.GroupParameter.__init__(self, **defs)
@@ -111,11 +114,17 @@ class crystalViewBase(pTypes.GroupParameter):
 				self.crystalStruct.reInitalizeAllDat()
 				if param.parent().name() == 'Reciprocal Lattice':
 					self.graphicViewObj['Reciprocal Lattice'].createOrAdd(childName)
+
 				else:
 					self.graphicViewObj[childName] = makeCrystalBase.makeCrystals(self.crystalStruct, childName)
 					self.graphicViewObj[childName].createOrAdd(childName)
-					self.addDock(self.param('Display...').parent().name()
-						+' '+childName, self.graphicViewObj[childName].w)
+					if param.parent().name() == 'Electronic Band Structure':
+						self.addDock(self.param('Display...').parent().name()
+							+' '+childName, self.graphicViewObj[childName].lcaoBndStruct)
+
+					else:
+						self.addDock(self.param('Display...').parent().name()
+							+' '+childName, self.graphicViewObj[childName].w)
 
 			elif not data and isinstance(data, bool):			
 				if param.parent().name() == 'Reciprocal Lattice':

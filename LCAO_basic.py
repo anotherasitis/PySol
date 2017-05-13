@@ -5,8 +5,8 @@ import pyqtgraph.opengl as gl
 import math
 import Energy as nrg
 import numpy as np
-import latVectors as lv
-import latPoints as lp
+# import latVectors as lv
+# import latPoints as lp
 import Phase as phase
 
 #This is the minimal requirements in order to plot the functional band structure, as a probe for mathematical errors
@@ -17,7 +17,7 @@ import Phase as phase
 #basis= dual basis for zinc blend ()
 #Struct 'ZB' for  symmetry simplificiations, not explicitly used but was needed for the 
 
-def LCAO(Atom1=[49,4], Atom2=[15,4],plv=np.array([[0.5,0.5,0],[0,0.5,0.5],[0.5,0,0.5]]),basis=np.array([[0,0,0],[0.25,0.25,0.25]]),struct='ZB',latconst=1.8687E-10,bandPts = 5000):
+def LCAO(crystStruct, Atom1=[49,4], Atom2=[15,4],plv=np.array([[0.5,0.5,0],[0,0.5,0.5],[0.5,0,0.5]]),basis=np.array([[0,0,0],[0.25,0.25,0.25]]),struct='ZB',latconst=1.8687E-10,bandPts = 5000):
 
 	#This is the bond oreintations for the p orbitals, dont worry about adding this as input as this is fine to just exsist here as almost all bonding uses a p vec.
 
@@ -25,7 +25,7 @@ def LCAO(Atom1=[49,4], Atom2=[15,4],plv=np.array([[0.5,0.5,0],[0,0.5,0.5],[0.5,0
 	#kplot=np.array([[0,0,0],[0,0,0],[0.5,0.5,0.5],[0,2,0],[0.5,2,0.5]]) #This is the set of symmetry vectors used for plotting, was automating more but not complete
 
 
-	##Aaron note:
+	##note:
 	#All these constants are good as is and wont change material to material
 
 	#################################
@@ -38,8 +38,8 @@ def LCAO(Atom1=[49,4], Atom2=[15,4],plv=np.array([[0.5,0.5,0],[0,0.5,0.5],[0.5,0
 	hbar = 1.05459E-34#joule form
 	fineStruct = 0.0072973525664
 
-	atoms = lp.latpts(basis, plv)
-	bonds = lv.latVec(struct)
+	atoms = crystStruct.latPoints # lp.latpts(basis, plv)
+	bonds = crystStruct.latVec # lv.latVec(struct)
 
 	#Nearest neighbor normalized vectors
 	d_norm = np.array([(bonds[0][1] - bonds[0][0])/np.linalg.norm(bonds[0][1] - bonds[0][0]), \
@@ -226,8 +226,10 @@ def LCAO(Atom1=[49,4], Atom2=[15,4],plv=np.array([[0.5,0.5,0],[0,0.5,0.5],[0.5,0
 		plotWidget.plot(Kpts3 , BandE3[i,...] , pen=(i,8))
 		plotWidget.plot(Kpts4 , BandE4[i,...] , pen=(i,8))
 
+	return plotWidget
 
-	pg.QtGui.QApplication.exec_()
+
+
 
 
 

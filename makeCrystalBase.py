@@ -9,6 +9,7 @@ import itertools as itTl
 import pyqtgraph as pg
 import makeBox as mkBx
 import pyqtgraph.exporters
+import LCAO_basic as lcao
 import makeGrids as mkGds
 import pyqtgraph.opengl as gl
 import makePlanes as mkPlns
@@ -42,6 +43,7 @@ class makeCrystals():
 
 		########################################### Crystal Properties
 		self.strt=[]
+		self.crystData = crystData
 		self.xtlType=crystData.polyType
 		self.xtlView=latGraphType
 		self.numDiffAt=len(crystData.atms)
@@ -87,7 +89,7 @@ class makeCrystals():
 
 		for i in self.bxOrPar:
 			self.bxs.append(mkBx.mkBx(i[0], i[1], i[2],self.linewidth,self.transp,self.scl,self.bxSdLen))
-			self.strt.append(mkXtlSt.mkXtlSt(self.xtlType,self.xtlView,self.numDiffAt,self.res,
+			self.strt.append(mkXtlSt.mkXtlSt(self.crystData, self.xtlType,self.xtlView,self.numDiffAt,self.res,
 				i,self.bxSdLen,self.scl,self.transp,self.linewidth))
 
 			if self.showPln:
@@ -150,3 +152,9 @@ class makeCrystals():
 
 		for i in self.frmSurf:
 			self.w.addItem(i)
+
+	def makeLCAOModel(self):
+		self.lcaoBndStruct = lcao.LCAO(self.crystData)#plv=.primLatVect, basis=self.crystData.basis)
+
+	def makeNFEMModel(self):
+		pass

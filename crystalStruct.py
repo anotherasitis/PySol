@@ -83,7 +83,7 @@ class crystalStruct():
 			j=list(self.latPoints.keys())
 			self.bondVec = [[0.5,0.5,-0.5],[0.5,-0.5,0.5],[-0.5,0.5,0.5]]
 			for k in self.latPoints :
-				for i in self.bondVec[...,]:
+				for i in self.bondVec:
 					found = True
 					bond = i+self.latPoints[k]
 					count = 0
