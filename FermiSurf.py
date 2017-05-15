@@ -29,7 +29,7 @@ def fermiSurf(latPts=(0,0,0)):
 		return ps
 	   
 	data = np.fromfunction(psi, (m,m,m))
-	verts, faces = pg.isosurface(data, data.max()/4.)
+	verts, faces = pg.isosurface(data, data.max()/4)
 	md = gl.MeshData(vertexes=verts, faces=faces)
 	colors = np.ones((md.faceCount(), 4), dtype=float)
 	colors[:,3] = 0.6

@@ -16,9 +16,12 @@ class crystalStruct():
 		self.bondVec = []
 		self.startingPlane = []
 		self.bounds = np.array([1,1,1])
-		self.basis = [[0,0,0]]	
+		self.basis = []
+		self.rcpScale = ''
+		self.getBasis()
 		self.latpts()
 		self.getLatVec()
+		# print(self.latVec)
 		self.getRcpLatPnts()
 		
 	def reInitalizeAllDat(self):
@@ -26,12 +29,22 @@ class crystalStruct():
 		self.getLatVec()
 		self.getRcpLatPnts()
 
+	def getBasis(self):
+		if self.polyType == 'ZB':
+			self.basis = [[0,0,0],[0.25,0.25,0.25]]
+
+		else:
+			self.basis = [[0,0,0]]
+
+		self.rcpBasis = [[0,0,0]]
+
 	def getRcpLatPnts(self):
-		scalarVal = np.dot(self.primLatVect[1], np.cross(self.primLatVect[2], self.primLatVect[0]))
-		self.primRcpLatVec[0] = 2*np.pi*np.cross(self.primLatVect[1], self.primLatVect[2])/scalarVal
-		self.primRcpLatVec[1] = 2*np.pi*np.cross(self.primLatVect[2], self.primLatVect[0])/scalarVal
-		self.primRcpLatVec[2] = 2*np.pi*np.cross(self.primLatVect[0], self.primLatVect[1])/scalarVal
-		self.rcpLatPnts = latPoints.latpts(self.basis, self.primRcpLatVec, self.bounds)
+		self.rcpScale = 2*np.pi/np.dot(self.primLatVect[1], np.cross(self.primLatVect[2], self.primLatVect[0]))
+		self.primRcpLatVec[0] = self.rcpScale*np.cross(self.primLatVect[1], self.primLatVect[2])
+		self.primRcpLatVec[1] = self.rcpScale*np.cross(self.primLatVect[2], self.primLatVect[0])
+		self.primRcpLatVec[2] = self.rcpScale*np.cross(self.primLatVect[0], self.primLatVect[1])
+		print(self.primRcpLatVec)
+		self.rcpLatPnts = latPoints.latpts(basis = self.rcpBasis, plv = self.primRcpLatVec, bounds = self.rcpScale*self.bounds)
 
 	def getLatVec(self):
 		Found=False
@@ -104,13 +117,26 @@ class crystalStruct():
 				self.latVec[k] = np.array( [ ZBpts[k], ZBpts[k]+tethe[0], ZBpts[k]+tethe[1], ZBpts[k]+tethe[2], ZBpts[k]+tethe[3] ])
 
 	def latpts(self): #, plane = false):
-		for i in self.basis:
-			self.latPoints[i[0]*100+i[1]*10+i[2]]=i
-			for j in self.primLatVect:
-			#Note bounds should be adjusted to be the solutions to being in or outside a volume (spacial testing for non rectangular shapes)
-				if i[0] + j[0] <= self.bounds[0] and i[1] + j[1] <= self.bounds[1] and i[2] + j[2] <= self.bounds[2]:
-					a=(i[0]*100+i[1]*10+i[2])+(j[0]*100+j[1]*10+j[2])
-					self.latPoints[a] = i + j
+		self.latPoints = latPoints.latpts(basis = self.basis,plv = self.primLatVect, bounds = self.bounds)
+		# lat_temp = {}
+		
+		# for i in self.basis:
+		# 	f=0
+		# 	self.latPoints[i[0]*100+i[1]*10+i[2]]=i
+		# 	lat_temp[i[0]*100+i[1]*10+i[2]]=i
+		# 	while f<=3:
+		# 		lat_temp=self.latPoints
+		# 		for k in  list(self.latPoints):
+		# 			for j in self.primLatVect:
+		# 				a= ((i[0]*100+i[1]*10+i[2])+(j[0]*100+j[1]*10+j[2]) + 
+		# 					(lat_temp[k][0]*100+lat_temp[k][1]*10+lat_temp[k][2]))
+
+		# 				if (i[0] + j[0] + lat_temp[k][0]  <= self.bounds[0] and i[1] + j[1] + lat_temp[k][1] <= 
+		# 					self.bounds[1] and i[2] + j[2] + lat_temp[k][2] <= self.bounds[2]) and (not (a in self.latPoints)) :
+		# 					#b = i + j
+		# 					self.latPoints[a] = i + j + self.latPoints[k]
+		# 					f=0
+		# 			f=f+1
 
 	def calcPhononCurve(self):
 		pass

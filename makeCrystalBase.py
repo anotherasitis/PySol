@@ -68,9 +68,10 @@ class makeCrystals():
 		self.makeLatItems()
 
 	def makeReciprocalLattice(self):
-		self.makeLatItems()
+		self.makeLatItems(scl = 1/crystData.rcpScale)
 
-	def makeLatItems(self):
+	def makeLatItems(self, scl = 1, transp = 1):
+		
 		boxCorn=np.linspace(self.firOrg.min(),self.numLat.max()-1,num=self.numLat.max()-self.firOrg.min())
 		boxPos=np.array(list(itTl.product(boxCorn, repeat=3)))
 		z=np.where(np.all([
@@ -82,7 +83,7 @@ class makeCrystals():
 		print(self.bxOrPar)
 		for indx, i in enumerate(self.bxOrPar.T):
 			self.rotArr[indx]=1
-			self.grids.append(mkGds.mkGds(i,self.bxSdLen,self.scl))
+			self.grids.append(mkGds.mkGds(i,self.bxSdLen,scl))
 			self.grids[indx].rotate(270+90*indx, self.rotArr[2], self.rotArr[0], self.rotArr[1])
 			# lbl.append(pg.LabelItem(text=grdLbl[indx],parent=grids[indx]))
 			self.rotArr=np.array([0,0,0])
